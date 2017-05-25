@@ -1,0 +1,93 @@
+body { 
+	padding-top: 50px; 
+	font-family: "Proxima", Helvetica, sans-serif;
+	font-size: 14pt;
+}
+a {
+	color: #990000;
+}
+
+.carousel-control {
+    width: 4%;
+}
+.lines {
+   width: 100%; 
+   text-align: center; 
+   border-bottom: 1px solid #000; 
+   line-height: 0.1em;
+   margin: 10px 0 20px; 
+} 
+
+h2 span { 
+    background:whitesmoke; 
+    padding:0 10px; 
+}
+footer {
+
+}
+img {
+  max-width: 100%;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 5px;
+}
+hr {
+    margin-top: 21px;
+    margin-bottom: 21px;
+    border: 0;
+    border-top: 1px solid lightgrey;
+}
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+.navbar-text{
+  color: white !important;
+  font-size: 18pt;
+  margin-top: 9px;
+  margin-bottom: 7px;
+}
+.well {
+	overflow: hidden;
+}
+.navbar>.container .navbar-brand {
+    margin-left: -20px;
+}
+.navbar-default {
+    border-color: maroon;
+    background-color: #990000;
+    margin: 0px;
+    border-radius: 0px;
+    color: white;
+  	font-size: 13pt;
+  	font-family: "Proxima", Helvetica, sans-serif;
+  	padding-left: 20px;
+}
+.navbar-default .navbar-nav > li > a {
+    color: white;
+    font-family: "Proxima", Helvetica, sans-serif;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+    background-color: maroon;
+    color: white;
+}
+.navbar-brand {
+	padding-right: 15px;
+	padding-top: 3px;
+	padding-left: 15px;
+}
+.container > .text {
+  display: inline;
+}
+.ct {
+  text-align:center;
+}
+th {
+  border: 1px solid transparent;
+}
+td {
+  border: 1px solid transparent;
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RoboRaiders</title>
+    <link rel="stylesheet" href="{{  url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <script src="{{  url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand"><img src="{{ url_for('static', filename='img/Bobo.png') }}" height="45px"></a>
+     <p class="navbar-text hidden-xs hidden-sm" style="">Robo Raiders FTC 7129</p>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('index') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        <li><a href="{{ url_for('resources') }}">Resources</a></li>
+        <li><a href="{{ url_for('robots') }}">Robots</a></li>
+        <li><a href="{{ url_for('camps') }}">Summer Camps</a></li>
+        <li><a href="{{ url_for('sponsors') }}">Sponsors</a></li>
+        <li><a href="{{ url_for('calendar') }}">Calendar</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container -->
+</nav>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="list-group">
+                {% for message in messages %}
+                    <li class="list-group-item-info text-center">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <div class="content">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+<footer>
+  <div class="container">
+  <hr>
+    <p class="pull-right">
+    <a href="https://www.facebook.com/roboraidersftc7129" target="_blank"><img width="32" height="32" title="" alt="" src="{{ url_for('static', filename='img/Facebook.png') }}"></a>
+    <a href="https://www.youtube.com/roboraidersftc7129" target="_blank"><img width="32" height="32" src="{{ url_for('static', filename='img/YouTube.png') }}"></a>
+    <a href="http://www.firstinspires.org/" target="_blank"><img width="32" height="32" src="{{ url_for('static', filename='img/FIRST.png') }}"></a>
+    <a href="#">Back to top</a>
+    </p>
+
+    <p class="pull-left">© 2017 <a href="mailto:teamroboraiders@gmail.com">Robo Raiders FTC 7129</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

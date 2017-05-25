@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+
+<div class="container">
+
+  <div class="well">
+  <h2>Resource Documents</h2>
+  <p>One of our core values as a team is to share what we learn and help other FIRST teams in their journey. Please feel free to use and distribute these documents as you see fit.
+  </p>
+    <div class="col-xl-12">
+        <h3>
+            <a href="{{ url_for('static', filename='resources/Downloading Android Studio.pdf') }}">Downloading and Installing Android Studio and the FTC SDK</a>
+        </h3>
+      <p>
+      This document is a detailed walkthrough of all the steps for downloading and installing Android Studio, the FTC SDK, and the development packages needed to program for FTC.
+      </p>
+
+      <h3>
+          <a href="{{ url_for('static', filename='resources/FTC Phone Update Management.pdf') }}">FTC Phone Update Management</a>
+      </h3>
+      <p>
+      This is our documentation of how to update the FTC Driver Station and Robot Controller Apps as well as how to revert back to a prior version.
+      </p>
+
+      <h3>
+          <a href="{{ url_for('static', filename='resources/Android Studio Kickoff Slides.pdf') }}">Android Studio Workshop Slides 2016-2017 Kickoff</a>
+      </h3>
+      <p>
+      These are the slides from our Android Studio Workshop at the 2016 St. Louis Kickoff event. The slides give an overview of the new electronics, how to make a phone config file, registering an OpMode, and the basics of flow charting.
+      </p>
+
+     <h3>
+         <a href="{{ url_for('static', filename='resources/Programming Conventions.pdf') }}">Our Team's Naming and Versioning Conventions</a>
+     </h3>
+      <p>
+      These are the naming and versioning conventions our team has set for our programming. It includes our standards for variable, class, and program nomenclature. It also includes our versioning standards (<a href="http://semver.org/">Semantic Versioning 2.0.0</a>) and explanations.
+      </p>
+
+      <h3>
+          <a href="{{ url_for('static', filename='resources/Design Process and Building Strategy.pdf') }}">Design Process and Build Strategy</a>
+      </h3>
+      <p>This presentation explains our process for designing our robot and determining a game strategy. It has information from top FTC and FRC teams <a href="http://www.cougarrobot.com/">Cougar Robotics</a> and <a href="http://www.simbotics.org/">Simbotics</a> as well as some of our own findings and strategies.
+      </p>
+
+      <h3>
+          <a href="{{ url_for('static', filename='resources/Engineering Notebook.pdf') }}">Engineering Notebook</a>
+      </h3>
+      <p>This document goes over our plan for documentation and structure for the Engineering Notebook. By following these steps consistently we recieved the Think award at North Super Regional in 2014 and 2015, as well as being nominated for Think at the World Championship both of those years.</p>
+
+      <h3>
+          <a href="{{ url_for('static', filename='resources/FTC App Inventor.pdf') }}">FTC App Inventor</a>
+      </h3>
+      <p>This is the handout from our App Inventor workshop at the 2015 St. Louis Kickoff event. It contains links to resources for downloading and installing App Inventor, help forums, and example programs. </p>
+    </div>
+  </div>
+
+{% endblock %}
