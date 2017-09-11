@@ -7,3 +7,8 @@ venv/*
 dist
 build
 eggs
+.idea/
+app/app.pyc
+app/config.pyc
+app/views.pyc
+venv/
