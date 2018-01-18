@@ -14,9 +14,9 @@ def about():
     return render_template('about.html')
 
 
-@app.route('/calendar', methods=['GET'])
-def calendar():
-    return render_template('calendar.html')
+@app.route('/awards', methods=['GET'])
+def awards():
+    return render_template('awards.html')
 
 
 @app.route('/camps', methods=['GET'])
