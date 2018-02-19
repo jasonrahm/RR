@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>RoboRaiders</title>
-    <link rel="stylesheet" href="{{  url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    <script src="{{  url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.floatThead.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -39,6 +42,12 @@
         <li><a href="{{ url_for('robots') }}">Robots</a></li>
         <li><a href="{{ url_for('camps') }}">Summer Camps</a></li>
         <li><a href="{{ url_for('sponsors') }}">Sponsor Us</a></li>
+        {% if g.user.is_authenticated %}
+            <li><a href="{{ url_for('scoutinglinks', next=request.path) }}">Scouting</a></li>
+            <li><a href="{{ url_for('logout', next=request.path) }}">Sign Out</a></li>
+        {% else %}
+            <li><a href="{{ url_for('login', next=request.path) }}">Sign In</a></li>
+        {% endif %}
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container -->

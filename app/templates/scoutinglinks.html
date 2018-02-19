@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Robo Raiders FTC 7129</h2>
+    <h3>Competition Scouting App</h3>
+    <p>Manage competitions, teams, and scouting with this application. After scouting is complete,
+        you can run reports for assistance with alliance selection.</p>
+    <hr size="2">
+    <ul class="list-group">
+    <li class="list-group-item list-group-item-info"><a href="{{ url_for('competitions') }}">Competitions</a></li>
+    <li class="list-group-item list-group-item-info"><a href="{{ url_for('teams') }}">Teams</a></li>
+    <li class="list-group-item list-group-item-info"><a href="{{ url_for('scouting') }}">Pit Scouting</a></li>
+    <li class="list-group-item list-group-item-info"><a href="{{ url_for('scoring') }}">Match Scoring</a></li>
+    <li class="list-group-item list-group-item-info"><a href="{{ url_for('reporting') }}">Reporting</a></li>
+    </ul>
+{% endblock %}
+

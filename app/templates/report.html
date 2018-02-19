@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+      <h3>Match Report</h3>
+    <table
+        id="matchreport"
+        class="table sticky-header table-responsive table-striped tablesorter">
+    <thead>
+        <tr>
+            <th>Team</th>
+            <th id="mr_windex">Weighted Index</th>
+            <th id="mr_avg">Scoring Avg</th>
+            <th id="mr_max">Scoring Max</th>
+            <th id="mr_aindex">Scouting Projection</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for x in data %}
+        <tr>
+            <td><a href="{{ url_for('team', id = x[6]) }}">{{ x[1] }}: {{ x[0] }}</a></td>
+            <td>{{ '{0:0.2f}'.format(x[4]) }}</td>
+            <td>{{ '{0:0.2f}'.format(x[2]) }}</td>
+            <td>{{ x[3] }}</td>
+            <td>{{ x[5] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock %}
