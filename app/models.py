@@ -74,7 +74,8 @@ class Scoring(db.Model):
     t_crypto_columns = db.Column(db.Integer)
     t_crypto_rows = db.Column(db.Integer)
     t_crypto_cipher = db.Column(db.Integer)
-    t_relic_score = db.Column(db.Integer)
+    t_relic1 = db.Column(db.Integer)
+    t_relic2 = db.Column(db.Integer)
     t_park = db.Column(db.Boolean)
     a_score = db.Column(db.Integer)
     t_score = db.Column(db.Integer)
@@ -101,7 +102,8 @@ class Scoring(db.Model):
                  t_crypto_columns,
                  t_crypto_rows,
                  t_crypto_cipher,
-                 t_relic_score,
+                 t_relic1,
+                 t_relic2,
                  t_park,
                  a_score,
                  t_score,
@@ -119,7 +121,8 @@ class Scoring(db.Model):
         self.t_crypto_columns = t_crypto_columns
         self.t_crypto_rows = t_crypto_rows
         self.t_crypto_cipher = t_crypto_cipher
-        self.t_relic_score = t_relic_score
+        self.t_relic1 = t_relic1
+        self.t_relic2 = t_relic2
         self.t_park = t_park
         self.a_score = a_score
         self.t_score = t_score
@@ -146,7 +149,9 @@ class Scouting(db.Model):
     t_crypto_columns = db.Column(db.Integer)
     t_crypto_rows = db.Column(db.Integer)
     t_crypto_cipher = db.Column(db.Boolean)
-    t_relic_zone = db.Column(db.Integer)
+    t_relics = db.Column(db.Integer)
+    t_relic1 = db.Column(db.Integer)
+    t_relic2 = db.Column(db.Integer)
     t_park = db.Column(db.Boolean)
     score_projection = db.Column(db.Integer)
     notes = db.Column(db.String(500))
@@ -170,7 +175,9 @@ class Scouting(db.Model):
                  t_crypto_columns,
                  t_crypto_rows,
                  t_crypto_cipher,
-                 t_relic_zone,
+                 t_relics,
+                 t_relic1,
+                 t_relic2,
                  t_park,
                  score_projection,
                  notes,
@@ -185,7 +192,9 @@ class Scouting(db.Model):
         self.t_crypto_columns = t_crypto_columns
         self.t_crypto_rows = t_crypto_rows
         self.t_crypto_cipher = t_crypto_cipher
-        self.t_relic_zone = t_relic_zone
+        self.t_relics = t_relics
+        self.t_relic1 = t_relic1
+        self.t_relic2 = t_relic2
         self.t_park = t_park
         self.score_projection = score_projection
         self.notes = notes

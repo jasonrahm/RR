@@ -108,7 +108,11 @@ class ReportingForm(FlaskForm):
         (0, 'Ignore'),
         (1, 'Important'),
         (3, 'Critical')], coerce=int, default=3)
-    t_relic = SelectField('Relic (t)', choices=[
+    t_relic1 = SelectField('Relic 1 (t)', choices=[
+        (0, 'Ignore'),
+        (1, 'Important'),
+        (3, 'Critical')], coerce=int, default=3)
+    t_relic2 = SelectField('Relic 2 (t)', choices=[
         (0, 'Ignore'),
         (1, 'Important'),
         (3, 'Critical')], coerce=int, default=3)
@@ -134,14 +138,22 @@ class ScoringForm(FlaskForm):
     t_crypto_columns = IntegerField('Crypto Columns (t)', default=0)
     t_crypto_rows = IntegerField('Crypto Rows (t)?', default=0)
     t_crypto_cipher = BooleanField('Cipher Completed (t)?')
-    t_relic_score = SelectField('Relic Score (t)?',
-                            choices=[(0, 'Not Applicable'),
+    t_relic1 = SelectField('Relic 1 Score (t)?',
+                            choices=[(0, 'No Score'),
                                      (10, 'Zone 1'),
                                      (25, 'Zone 1 - Upright'),
                                      (20, 'Zone 2'),
                                      (35, 'Zone 2 - Upright'),
                                      (40, 'Zone 3'),
                                      (55, 'Zone 3 - Upright')], coerce=int)
+    t_relic2 = SelectField('Relic 2 Score (t)?',
+                           choices=[(0, 'No Score'),
+                                    (10, 'Zone 1'),
+                                    (25, 'Zone 1 - Upright'),
+                                    (20, 'Zone 2'),
+                                    (35, 'Zone 2 - Upright'),
+                                    (40, 'Zone 3'),
+                                    (55, 'Zone 3 - Upright')], coerce=int)
     t_park = BooleanField('Balanced Park (t)?')
     a_score = IntegerField('Autonomous Score', default=0)
     t_score = IntegerField('Teleop Score', default=0)
@@ -170,7 +182,11 @@ class ScoutingForm(FlaskForm):
     t_crypto_columns = IntegerField('Crypto Columns (t)?', [validators.NumberRange(min=0, max=6)], default=0)
     t_crypto_rows = IntegerField('Crypto Rows (t)?', [validators.NumberRange(min=0, max=8)], default=0)
     t_crypto_cipher = BooleanField('Cipher Completed (t)?')
-    t_relic_zone = SelectField('Relic Zone (t)?',
+    t_relics = SelectField('How many relics can they score (t)?',
+                           choices=[(0, 'None'),
+                                    (1, 'One'),
+                                    (2, 'Two')], coerce=int)
+    t_relic1 = SelectField('Relic Zone (t)?',
                                 choices=[(0, 'Not Applicable'),
                                          (10, 'Zone 1'),
                                          (25, 'Zone 1 - Upright'),
@@ -178,6 +194,14 @@ class ScoutingForm(FlaskForm):
                                          (35, 'Zone 2 - Upright'),
                                          (40, 'Zone 3'),
                                          (55, 'Zone 3 - Upright')], coerce=int)
+    t_relic2 = SelectField('Relic Zone (t)?',
+                           choices=[(0, 'Not Applicable'),
+                                    (10, 'Zone 1'),
+                                    (25, 'Zone 1 - Upright'),
+                                    (20, 'Zone 2'),
+                                    (35, 'Zone 2 - Upright'),
+                                    (40, 'Zone 3'),
+                                    (55, 'Zone 3 - Upright')], coerce=int)
     t_park = BooleanField('Balanced Park (t)?')
     score_projection = IntegerField('Score Projection', default=0)
     notes = StringField('Notes',

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <table class="table table-responsive table-bordered table-striped">
+    <caption class="text-center">Match Projections</caption>
+    <tr>
+        <th class="text-center">Match Number</th>
+        <th class="text-center">Red Alliance</th>
+        <th class="text-center">Blue Alliance</th>
+        <th class="text-center">Projected Score</th>
+    </tr>
+    {% for x in data %}
+        <tr>
+            {% if x[1] == '7129' or x[2] == '7129' %}
+                <td class="text-center" style="background-color: yellow">{{ x[0] }}</td>
+                <td class="text-center" style="background-color: yellow; color: red;">{{ x[1] }}, {{ x[2] }}</td>
+                <td class="text-center">{{ x[4] }}, {{ x[5] }}</td>
+            {% elif x[4] == '7129' or x[5] == '7129' %}
+                <td class="text-center" style="background-color: yellow">{{ x[0] }}</td>
+                <td class="text-center">{{ x[1] }}, {{ x[2] }}</td>
+                <td class="text-center" style="background-color: yellow; color: blue;">{{ x[4] }}, {{ x[5] }}</td>
+            {% else %}
+                <td class="text-center">{{ x[0] }}</td>
+                <td class="text-center">{{ x[1] }}, {{ x[2] }}</td>
+                <td class="text-center">{{ x[4] }}, {{ x[5] }}</td>
+            {% endif %}
+            {% if x[3] > x[6] %}
+                <td class="text-center" style="background-color: red; color: #F0F0F0">{{ x[3] }}-{{ x[6] }}</td>
+            {% elif x[6] > x[3] %}
+                <td class="text-center" style="background-color: blue; color: #F0F0F0">{{ x[3] }}-{{ x[6] }}</td>
+            {% else %}
+                <td class="text-center">{{ x[3] }}-{{ x[6] }}</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

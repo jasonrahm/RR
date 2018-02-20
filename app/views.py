@@ -20,6 +20,9 @@ from forms import ReportingForm
 from forms import ScoringForm
 from forms import ScoutingForm
 from forms import TeamForm
+
+from itertools import islice
+
 from models import db
 from models import Competitions
 from models import CompetitionTeam
@@ -31,6 +34,8 @@ from models import Users
 from sqlalchemy import and_
 
 import datetime
+import pandas as pd
+import requests
 
 # Id of current competition
 cur_comp = 1
@@ -179,6 +184,59 @@ def logout():
     return redirect(request.args.get('next') or url_for('index'))
 
 
+@app.route('/projections/', defaults={'comp': cur_comp}, methods=['GET'])
+@app.route('/projections/competitions/<int:comp>', methods=['GET'])
+@login_required
+def projections(comp):
+
+    pitr = {}
+    pit_records = db.session.query(Scouting).filter(
+        Scouting.competitions == comp).all()
+    for record in pit_records:
+        pitr[str(record.team).split(':')[0]] = record.score_projection
+
+    # tables = pd.read_html(r'/Users/rahm/Downloads/matchlist1.html')
+    tables = pd.read_html('https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchlist.html')
+    table = tables[0]
+    table.columns = ['Number', 'Red 1', 'Red 2', 'Blue 1', 'Blue 2']
+
+    projection_data = []
+    for (idx, row) in islice(table.iterrows(), 1, None):
+        if not isinstance(row['Red 1'], str):
+            r1 = row['Red 1'].replace("*", "")
+        if not isinstance(row['Red 2'], str):
+            r2 = row['Red 2'].replace("*", "")
+        if not isinstance(row['Blue 1'], str):
+            b1 = row['Blue 1'].replace("*", "")
+        if not isinstance(row['Blue 2'], str):
+            b2 = row['Blue 2'].replace("*", "")
+
+        match = row['Number']
+        red_score = pitr[r1] + pitr[r2]
+        blue_score = pitr[b1] + pitr[b2]
+
+        projection_data.append([match, r1, r2, red_score, b1, b2, blue_score])
+
+    return render_template('projections.html', data=projection_data)
+
+
+@app.route('/rankings', methods=['GET'])
+def rankings():
+    rank = 'https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/rankings.html'
+    rank_response = requests.get(rank, verify=False)
+    rank_soup = bs(rank_response.text)
+    rank_data = rank_soup.findAll('table')[0]
+
+    match = 'https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchresults.html'
+    match_response = requests.get(match, verify=False)
+    match_soup = bs(match_response.text)
+    match_data = match_soup.findAll('table')[0]
+
+    return render_template('rankings.html',
+                           rank_data=Markup(rank_data),
+                           match_data=Markup(match_data))
+
+
 @app.route('/report', methods=['GET'])
 @login_required
 def report():
@@ -220,7 +278,8 @@ def reporting(comp):
                            (avg(t_crypto_columns)*20*%d) +
                            (avg(t_crypto_rows)*10*%d) +
                            (avg(t_crypto_cipher)*30*%d) +
-                           (avg(t_relic_score)*%d) +
+                           (avg(t_relic1)*%d) +
+                           (avg(t_relic2)*%d) +
                            (avg(t_park)*20*%d)
                            AS Score
                            FROM Scoring
@@ -236,7 +295,8 @@ def reporting(comp):
                                       int(postdata['t_columns']),
                                       int(postdata['t_rows']),
                                       int(postdata['t_cipher']),
-                                      int(postdata['t_relic']),
+                                      int(postdata['t_relic1']),
+                                      int(postdata['t_relic2']),
                                       int(postdata['t_park']),
                                       comp,
                                       x[0])
@@ -296,7 +356,8 @@ def scoring(comp):
             t_crypto_columns = request.form.get('t_crypto_columns', '')
             t_crypto_rows = request.form.get('t_crypto_rows', '')
             t_crypto_cipher = (False, True)[request.form.get('t_crypto_cipher', '') == u'y']
-            t_relic_score = request.form.get('t_relic_score', '')
+            t_relic1 = request.form.get('t_relic1', '')
+            t_relic2 = request.form.get('t_relic2', '')
             t_park = (False, True)[request.form.get('t_park', '') == u'y']
             a_score = request.form.get('a_score', '')
             t_score = request.form.get('t_score', '')
@@ -315,7 +376,8 @@ def scoring(comp):
                 t_crypto_columns=t_crypto_columns,
                 t_crypto_rows=t_crypto_rows,
                 t_crypto_cipher=t_crypto_cipher,
-                t_relic_score=t_relic_score,
+                t_relic1=t_relic1,
+                t_relic2=t_relic2,
                 t_park=t_park,
                 a_score=a_score,
                 t_score=t_score,
@@ -389,7 +451,9 @@ def scouting(comp):
             t_crypto_columns = request.form.get('t_crypto_columns', '')
             t_crypto_rows = request.form.get('t_crypto_rows', '')
             t_crypto_cipher = (False, True)[request.form.get('t_crypto_cipher', '') == u'y']
-            t_relic_zone = request.form.get('t_relic_zone', '')
+            t_relics = request.form.get('t_relic_zone', '')
+            t_relic1 = request.form.get('t_relic1', '')
+            t_relic2 = request.form.get('t_relic2', '')
             t_park = (False, True)[request.form.get('t_park', '') == u'y']
             score_projection = request.form.get('score_projection', '')
             notes = request.form.get('notes', '')
@@ -405,7 +469,9 @@ def scouting(comp):
                 t_crypto_columns=t_crypto_columns,
                 t_crypto_rows=t_crypto_rows,
                 t_crypto_cipher=t_crypto_cipher,
-                t_relic_zone=t_relic_zone,
+                t_relics=t_relics,
+                t_relic1=t_relic1,
+                t_relic2=t_relic2,
                 t_park=t_park,
                 score_projection=score_projection,
                 notes=notes,

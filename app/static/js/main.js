@@ -57,12 +57,15 @@ jQuery(document).ready(function() {
            t4 = 30;
        } else { t4 = 0; }
     });
-    $("select[name=t_relic_zone]").change(function() {
+    $("select[name=t_relic1]").change(function() {
         t5 = parseInt($(this).val());
         $('#score_projection').trigger('change');
+        $('#t_score').trigger('change');
+        $('#total_score').trigger('change');
     });
-    $("select[name=t_relic_score]").change(function() {
+    $("select[name=t_relic2]").change(function() {
         t5m = parseInt($(this).val());
+        $('#score_projection').trigger('change');
         $('#t_score').trigger('change');
         $('#total_score').trigger('change');
     });
@@ -73,16 +76,16 @@ jQuery(document).ready(function() {
     });
     $("input").change(function(){
         // console.log(a1, a2, a3, a4, t1, t2, t3, t4, t5, t6 );
-        $("#score_projection").val(a1 + a2 + a3 + a4 + t1 + t2 + t3 + t4 + t5 + t6);
+        $("#score_projection").val(a1 + a2 + a3 + a4 + t1 + t2 + t3 + t4 + t5 + t5m + t6);
     });
     $("input").change(function(){
        $("#a_score").val(a1m + a2m + a3 + a4);
     });
     $("input").change(function(){
-       $("#t_score").val(t1m + t2 + t3 + t4 + t5m + t6);
+       $("#t_score").val(t1m + t2 + t3 + t4 + t5 + t5m + t6);
     });
     $("input").change(function(){
-       $("#total_score").val(a1m + a2m + a3 + a4 + t1m + t2 + t3 + t4 + t5m + t6);
+       $("#total_score").val(a1m + a2m + a3 + a4 + t1m + t2 + t3 + t4 + t5 + t5m + t6);
     });
 
     $("#matchreport").tablesorter({
