@@ -186,7 +186,7 @@ class ScoutingForm(FlaskForm):
                            choices=[(0, 'None'),
                                     (1, 'One'),
                                     (2, 'Two')], coerce=int)
-    t_relic1 = SelectField('Relic Zone (t)?',
+    t_relic1 = SelectField('Relic 1 (t)?',
                                 choices=[(0, 'Not Applicable'),
                                          (10, 'Zone 1'),
                                          (25, 'Zone 1 - Upright'),
@@ -194,7 +194,7 @@ class ScoutingForm(FlaskForm):
                                          (35, 'Zone 2 - Upright'),
                                          (40, 'Zone 3'),
                                          (55, 'Zone 3 - Upright')], coerce=int)
-    t_relic2 = SelectField('Relic Zone (t)?',
+    t_relic2 = SelectField('Relic 2 (t)?',
                            choices=[(0, 'Not Applicable'),
                                     (10, 'Zone 1'),
                                     (25, 'Zone 1 - Upright'),
