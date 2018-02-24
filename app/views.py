@@ -350,7 +350,7 @@ def scoring(comp):
             match_number = request.form.get('match_number', '')
             a_hit_jewel = (False, True)[request.form.get('a_hit_jewel', '') == u'y']
             a_glyphs_delivered = request.form.get('a_glyphs_delivered', '')
-            a_glyph_correct = (False, True)[request.form.get('a_glyphs_correct', '') == u'y']
+            a_glyph_correct = (False, True)[request.form.get('a_glyph_correct', '') == u'y']
             a_park = (False, True)[request.form.get('a_park', '') == u'y']
             t_glyphs_delivered = request.form.get('t_glyphs_delivered', '')
             t_crypto_columns = request.form.get('t_crypto_columns', '')
@@ -445,7 +445,7 @@ def scouting(comp):
             team = request.form.get('team', '')
             a_jewel = (False, True)[request.form.get('a_jewel', '') == u'y']
             a_glyphs = request.form.get('a_glyphs', '')
-            a_glyph_correct = (False, True)[request.form.get('a_glyphs_correct', '') == u'y']
+            a_glyph_correct = (False, True)[request.form.get('a_glyph_correct', '') == u'y']
             a_park = (False, True)[request.form.get('a_park', '') == u'y']
             t_glyphs = request.form.get('t_glyphs', '')
             t_crypto_columns = request.form.get('t_crypto_columns', '')
