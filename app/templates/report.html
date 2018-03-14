@@ -1,8 +1,82 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RoboRaiders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.floatThead.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
 
-{% block content %}
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
 
-      <h3>Match Report</h3>
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+{#        <span class="icon-bar"></span>#}
+{#        <span class="icon-bar"></span>#}
+{#        <span class="icon-bar"></span>#}
+{#        <span class="icon-bar"></span>#}
+{#        <span class="icon-bar"></span>#}
+      </button>
+      <a href="/" class="navbar-brand"><img src="{{ url_for('static', filename='img/Bobo.png') }}" height="45px"></a>
+{#     <p class="navbar-text hidden-xs hidden-sm" style="">Robo Raiders FTC 7129</p>#}
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('index') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        <li><a href="{{ url_for('awards') }}">Awards</a></li>
+        <li><a href="{{ url_for('resources') }}">Resources</a></li>
+        <li><a href="{{ url_for('robots') }}">Robots</a></li>
+        <li><a href="{{ url_for('camps') }}">Summer Camps</a></li>
+        <li><a href="{{ url_for('sponsors') }}">Sponsor Us</a></li>
+        {% if g.user.is_authenticated %}
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Scouting <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('scoring') }}">Match Scoring</a></li>
+                    <li><a href="{{ url_for('scouting') }}">Pit Scouting</a></li>
+                    <li><a href="{{ url_for('rankings') }}">Rankings</a></li>
+                    <li><a href="{{ url_for('projections') }}">Match Projections</a></li>
+                    <li><a href="{{ url_for('reporting') }}">Reporting</a></li>
+                    <li><a href="{{ url_for('competitions') }}">Competitions</a></li>
+                    <li><a href="{{ url_for('teams') }}">Teams</a></li>
+                </ul>
+            </li>
+            <li><a href="{{ url_for('logout', next=request.path) }}">Sign Out</a></li>
+        {% else %}
+            <li><a href="{{ url_for('login', next=request.path) }}">Sign In</a></li>
+        {% endif %}
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container -->
+</nav>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="list-group">
+                {% for message in messages %}
+                    <li class="list-group-item-info text-center">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <div class="content">
+
+    <h3>Match Report</h3>
     <table
         id="matchreport"
         class="table sticky-header table-responsive table-striped tablesorter">
@@ -28,4 +102,55 @@
     </tbody>
     </table>
 
-{% endblock %}
+    <hr size="5">
+    <h3>Team Scoring Averages</h3>
+    <div id="chart_div"></div>
+
+    </div>
+
+<footer>
+  <div class="container">
+  <hr>
+    <p class="pull-right">
+    <a href="https://www.facebook.com/roboraidersftc7129" target="_blank"><img width="32" height="32" title="" alt="" src="{{ url_for('static', filename='img/Facebook.png') }}"></a>
+    <a href="https://www.youtube.com/roboraidersftc7129" target="_blank"><img width="32" height="32" src="{{ url_for('static', filename='img/YouTube.png') }}"></a>
+    <a href="http://www.firstinspires.org/" target="_blank"><img width="32" height="32" src="{{ url_for('static', filename='img/FIRST.png') }}"></a>
+    <a href="#">Back to top</a>
+    </p>
+
+    <p class="pull-left">© 2018 <a href="mailto:teamroboraiders@gmail.com">Robo Raiders FTC 7129</a>
+    </p>
+  </div>
+</footer>
+
+
+    <script>
+        google.load('visualization', '1', {packages: ['corechart', 'bar']});
+        google.setOnLoadCallback(drawAnnotations);
+
+        function drawAnnotations() {
+             var data = google.visualization.arrayToDataTable([
+                 ['Team', 'Auto', 'TeleOp', 'Endgame'],
+                 {% for x in data1 %}
+                     [{{ x[0]|tojson }}, {{ x[1]|tojson }}, {{ x[2]|tojson }}, {{ x[3]|tojson }}],
+                 {% endfor %}
+             ]);
+
+            var options = {
+                'isStacked': true,
+                height: 1200,
+
+                hAxis: {
+                    viewWindow: {
+                        min: 0,
+                        max: 350
+                    },
+                    ticks: [0,50,100,150,200,250,300,350]
+                },
+            };
+            var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+</body>
+</html>

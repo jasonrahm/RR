@@ -38,7 +38,7 @@ import pandas as pd
 import requests
 
 # Id of current competition
-cur_comp = 1
+cur_comp = 2
 
 
 @app.errorhandler(404)
@@ -193,7 +193,7 @@ def projections(comp):
     pit_records = db.session.query(Scouting).filter(
         Scouting.competitions == comp).all()
     for record in pit_records:
-        pitr[str(record.team).split(':')[0]] = record.score_projection
+        pitr[str(record.team).split(':')[0]] = record
 
     # tables = pd.read_html(r'/Users/rahm/Downloads/matchlist1.html')
     tables = pd.read_html('https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchlist.html')
@@ -212,12 +212,36 @@ def projections(comp):
             b2 = row['Blue 2'].replace("*", "")
 
         match = row['Number']
-        red_score = pitr[r1] + pitr[r2]
-        blue_score = pitr[b1] + pitr[b2]
+        red_score = (
+            (pitr[r1].a_jewel + pitr[r2].a_jewel) * 30 +
+            (pitr[r1].a_glyphs + pitr[r2].a_glyphs) * 15 +
+            (pitr[r1].a_glyph_correct + pitr[r2].a_glyph_correct) * 30 +
+            (pitr[r1].a_park + pitr[r2].a_park) * 10 +
+            min(24, pitr[r1].t_glyphs + pitr[r2].t_glyphs) * 2 +
+            min(6, pitr[r1].t_crypto_columns + pitr[r2].t_crypto_columns) * 20 +
+            min(8, pitr[r1].t_crypto_rows + pitr[r2].t_crypto_rows) * 10 +
+            (pitr[r1].t_crypto_cipher + pitr[r2].t_crypto_cipher) * 30 +
+            min(110, pitr[r1].t_relic1 + pitr[r1].t_relic2 + pitr[r2].t_relic1 + pitr[r2].t_relic2) +
+            (pitr[r1].t_park + pitr[r2].t_park) * 20
+        )
+
+        blue_score = (
+            (pitr[b1].a_jewel + pitr[b2].a_jewel) * 30 +
+            (pitr[b1].a_glyphs + pitr[b2].a_glyphs) * 15 +
+            (pitr[b1].a_glyph_correct + pitr[b2].a_glyph_correct) * 30 +
+            (pitr[b1].a_park + pitr[b2].a_park) * 10 +
+            min(24, pitr[b1].t_glyphs + pitr[b2].t_glyphs) * 2 +
+            min(6, pitr[b1].t_crypto_columns + pitr[b2].t_crypto_columns) * 20 +
+            min(8, pitr[b1].t_crypto_rows + pitr[b2].t_crypto_rows) * 10 +
+            (pitr[b1].t_crypto_cipher + pitr[b2].t_crypto_cipher) * 30 +
+            min(110, pitr[b1].t_relic1 + pitr[b1].t_relic2 + pitr[b2].t_relic1 + pitr[b2].t_relic2) +
+            (pitr[b1].t_park + pitr[b2].t_park) * 20
+        )
 
         projection_data.append([match, r1, r2, red_score, b1, b2, blue_score])
 
     return render_template('projections.html', data=projection_data)
+    #return render_template('projections.html')
 
 
 @app.route('/rankings', methods=['GET'])
@@ -241,10 +265,11 @@ def rankings():
 @login_required
 def report():
     data = session['report']
+    data1 = session['reportgraph']
     if data == '':
         redirect(url_for(reporting))
     else:
-        return render_template('report.html', data=data)
+        return render_template('report.html', data=data, data1=data1)
 
 
 @app.route('/reporting/', defaults={'comp': cur_comp}, methods=['GET', 'POST'])
@@ -304,6 +329,30 @@ def reporting(comp):
                 for row in result:
                     teams.append([row[1], row[2], row[3], row[4], row[5], pitr.get(row[0]), row[0]])
 
+            teamgraph = []
+            # teamgraph.append(["Team", "Autonomous", "TeleOp", "Endgame"])
+            for data in teams_scored:
+                sql_text1 = '''select Teams.id, Teams.name, Teams.number,
+                        avg(total_score) AS totalscore,
+                        avg(a_score),
+                        avg(t_glyphs_delivered*2) +
+                        avg(t_crypto_columns*20) +
+                        avg(t_crypto_rows*10) +
+                        avg(t_crypto_cipher*30) AS teleopscore,
+                        avg(t_relic1) +
+                        avg(t_relic2) +
+                        avg(t_park*20) AS endgamescore
+                        From Scoring
+                        INNER JOIN Teams
+                          On Scoring.teams = Teams.id
+                        WHERE competitions = %d AND teams = %d
+                        ORDER BY totalscore
+                        DESC''' % (comp, data[0])
+                result1 = db.engine.execute(sql_text1)
+                for row1 in result1:
+                    teamgraph.append([str(row1[2]), int(round(row1[4])), int(round(row1[5])), int(round(row1[6]))])
+
+            session['reportgraph'] = teamgraph
             session['report'] = teams
 
             flash('Report Ran Successfully.')
