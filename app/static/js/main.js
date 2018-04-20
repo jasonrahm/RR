@@ -92,6 +92,9 @@ jQuery(document).ready(function() {
             sortList: [[1,1]] // etc.
 
     });
+    $("#pitreport").tablesorter({
+        sortList: [[1,1]]
+    });
 
     $('table.sticky-header').floatThead();
 });

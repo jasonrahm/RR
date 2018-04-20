@@ -34,5 +34,21 @@
         </tr>
     {% endfor %}
     </table>
+    <hr>
+    <h3>Projected Rankings</h3>
+    <table class="table table-bordered table-striped table-responsive">
+    <tr>
+        <th>Team</th>
+        <th>QP</th>
+        <th>RP</th>
+    </tr>
+    {% for x in rank %}
+        <tr>
+            <td>{{ x[0] }}</td>
+            <td>{{ x[1] }}</td>
+            <td>{{ x[2] }}</td>
+        </tr>
+    {% endfor %}
+    </table>
 
 {% endblock %}

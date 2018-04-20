@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h3>Pit Scouting Data</h3>
+
+    <table id="pitreport" class="table sticky-header table-responsive table-striped tablesorter">
+    <thead>
+    <tr>
+        <th>Team</th>
+        <th id="pr_sp">Score Projection</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for x in records %}
+    <tr>
+        <td>{{ x.team }}</td>
+        <td>{{ x.score_projection }}</td>
+        <td><a href="{{  url_for('delete_scouting_record', id = x.id) }}">Delete Record?</a></td>
+    </tr>
+{##}
+{#    <tr>#}
+{#        <td>Hit Jewel (a)</td>#}
+{#        <td>{{ x.a_jewel }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Glyphs (a)</td>#}
+{#        <td>{{ x.a_glyphs }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Correct Column (a)</td>#}
+{#        <td>{{ x.a_glyph_correct }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Parking (a)</td>#}
+{#        <td>{{ x.a_park }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Glyphs (t)</td>#}
+{#        <td>{{ x.t_glyphs }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Crypto Columns (t)</td>#}
+{#        <td>{{ x.t_crypto_columns }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Crypto Rows (t)</td>#}
+{#        <td>{{ x.t_crypto_rows }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Crypto Cipher (t)</td>#}
+{#        <td>{{ x.t_crypto_cipher }}</td>#}
+{#    </tr>#}
+{#        <tr>#}
+{#        <td>Relic Count (t)</td>#}
+{#        <td>{{ x.t_relics }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Relic 1 (t)</td>#}
+{#        <td>{{ x.t_relic1 }}</td>#}
+{#    </tr>#}
+{#        <tr>#}
+{#        <td>Relic 2 (t)</td>#}
+{#        <td>{{ x.t_relic2 }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Parking (t)</td>#}
+{#        <td>{{ x.t_park }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Score Projection</td>#}
+{#        <td>{{ x.score_projection }}</td>#}
+{#    </tr>#}
+{#    <tr>#}
+{#        <td>Notes</td>#}
+{#        <td>{{ x.notes }}</td>#}
+{#    </tr>#}
+    {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock %}

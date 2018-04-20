@@ -184,34 +184,53 @@ def logout():
     return redirect(request.args.get('next') or url_for('index'))
 
 
+@app.route('/pitreport/', defaults={'comp': cur_comp}, methods=['GET'])
+@app.route('/pitreport/competitions/<int:comp>', methods=['GET'])
+@login_required
+def pitreport(comp):
+    records = db.session.query(Scouting).filter(Scouting.competitions == comp).all()
+    return render_template('pitreport.html', records=records)
+
+
 @app.route('/projections/', defaults={'comp': cur_comp}, methods=['GET'])
 @app.route('/projections/competitions/<int:comp>', methods=['GET'])
 @login_required
 def projections(comp):
 
     pitr = {}
+    rankings = {}
     pit_records = db.session.query(Scouting).filter(
         Scouting.competitions == comp).all()
     for record in pit_records:
         pitr[str(record.team).split(':')[0]] = record
+        rankings[str(record.team).split(':')[0]] = {'qp': 0, 'rp': 0}
 
-    # tables = pd.read_html(r'/Users/rahm/Downloads/matchlist1.html')
-    tables = pd.read_html('https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchlist.html')
+    tables = pd.read_html(r'/Users/rahm/PycharmProjects/RR/app/templates/temptable.html')
+
+    # tables = pd.read_html('https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchlist.html')
+    #tables = pd.read_html('http://127.0.0.1:5000/temptable')
     table = tables[0]
     table.columns = ['Number', 'Red 1', 'Red 2', 'Blue 1', 'Blue 2']
 
     projection_data = []
-    for (idx, row) in islice(table.iterrows(), 1, None):
-        if not isinstance(row['Red 1'], str):
-            r1 = row['Red 1'].replace("*", "")
-        if not isinstance(row['Red 2'], str):
-            r2 = row['Red 2'].replace("*", "")
-        if not isinstance(row['Blue 1'], str):
-            b1 = row['Blue 1'].replace("*", "")
-        if not isinstance(row['Blue 2'], str):
-            b2 = row['Blue 2'].replace("*", "")
 
+    for (idx, row) in islice(table.iterrows(), 1, None):
+        # print row['Number'], row['Red 1'], row['Red 2'], row['Blue 1'], row['Blue 2']
+        # if not isinstance(row['Red 1'], str):
+        #     r1 = row['Red 1'].replace("*", "")
+        # if not isinstance(row['Red 2'], str):
+        #     r2 = row['Red 2'].replace("*", "")
+        # if not isinstance(row['Blue 1'], str):
+        #     b1 = row['Blue 1'].replace("*", "")
+        # if not isinstance(row['Blue 2'], str):
+        #     b2 = row['Blue 2'].replace("*", "")
+        #
         match = row['Number']
+        r1 = str(row['Red 1'])
+        r2 = str(row['Red 2'])
+        b1 = str(row['Blue 1'])
+        b2 = str(row['Blue 2'])
+
         red_score = (
             (pitr[r1].a_jewel + pitr[r2].a_jewel) * 30 +
             (pitr[r1].a_glyphs + pitr[r2].a_glyphs) * 15 +
@@ -237,11 +256,36 @@ def projections(comp):
             min(110, pitr[b1].t_relic1 + pitr[b1].t_relic2 + pitr[b2].t_relic1 + pitr[b2].t_relic2) +
             (pitr[b1].t_park + pitr[b2].t_park) * 20
         )
+        if red_score > blue_score:
+            rankings[r1]['qp'] += 2
+            rankings[r2]['qp'] += 2
+            rankings[r1]['rp'] += blue_score
+            rankings[r2]['rp'] += blue_score
+            rankings[b1]['rp'] += blue_score
+            rankings[b2]['rp'] += blue_score
+        elif blue_score > red_score:
+            rankings[b1]['qp'] += 2
+            rankings[b2]['qp'] += 2
+            rankings[r1]['rp'] += red_score
+            rankings[r2]['rp'] += red_score
+            rankings[b1]['rp'] += red_score
+            rankings[b2]['rp'] += red_score
+        elif red_score == blue_score:
+            rankings[r1]['qp'] += 1
+            rankings[r2]['qp'] += 1
+            rankings[b1]['qp'] += 1
+            rankings[b2]['qp'] += 1
+            rankings[r1]['rp'] += red_score
+            rankings[r2]['rp'] += red_score
+            rankings[b1]['rp'] += red_score
+            rankings[b2]['rp'] += red_score
 
         projection_data.append([match, r1, r2, red_score, b1, b2, blue_score])
+    rank = []
+    for s in sorted(rankings.iteritems(), key=lambda (k, v): (-v['qp'], -v['rp'])):
+        rank.append([s[0], s[1]['qp'], s[1]['rp']])
 
-    return render_template('projections.html', data=projection_data)
-    #return render_template('projections.html')
+    return render_template('projections.html', data=projection_data, rank=rank)
 
 
 @app.route('/rankings', methods=['GET'])
