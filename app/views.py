@@ -38,7 +38,7 @@ import pandas as pd
 import requests
 
 # Id of current competition
-cur_comp = 2
+cur_comp = 1
 
 
 @app.errorhandler(404)
@@ -205,26 +205,13 @@ def projections(comp):
         pitr[str(record.team).split(':')[0]] = record
         rankings[str(record.team).split(':')[0]] = {'qp': 0, 'rp': 0}
 
-    tables = pd.read_html(r'/Users/rahm/PycharmProjects/RR/app/templates/temptable.html')
-
-    # tables = pd.read_html('https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchlist.html')
-    #tables = pd.read_html('http://127.0.0.1:5000/temptable')
+    #tables = pd.read_html(r'/home/citizenelah/RR/app/templates/temptable.html')
+    tables = pd.read_html('http://detroit.worlds.pennfirst.org/cache/Matches_2018_World_Championship_Edison.html')
     table = tables[0]
-    table.columns = ['Number', 'Red 1', 'Red 2', 'Blue 1', 'Blue 2']
+    table.columns = ['Number', 'Field', 'Red 1', 'Red 2', 'Blue 1', 'Blue 2']
 
     projection_data = []
-
     for (idx, row) in islice(table.iterrows(), 1, None):
-        # print row['Number'], row['Red 1'], row['Red 2'], row['Blue 1'], row['Blue 2']
-        # if not isinstance(row['Red 1'], str):
-        #     r1 = row['Red 1'].replace("*", "")
-        # if not isinstance(row['Red 2'], str):
-        #     r2 = row['Red 2'].replace("*", "")
-        # if not isinstance(row['Blue 1'], str):
-        #     b1 = row['Blue 1'].replace("*", "")
-        # if not isinstance(row['Blue 2'], str):
-        #     b2 = row['Blue 2'].replace("*", "")
-        #
         match = row['Number']
         r1 = str(row['Red 1'])
         r2 = str(row['Red 2'])
@@ -281,21 +268,23 @@ def projections(comp):
             rankings[b2]['rp'] += red_score
 
         projection_data.append([match, r1, r2, red_score, b1, b2, blue_score])
+
     rank = []
     for s in sorted(rankings.iteritems(), key=lambda (k, v): (-v['qp'], -v['rp'])):
         rank.append([s[0], s[1]['qp'], s[1]['rp']])
 
     return render_template('projections.html', data=projection_data, rank=rank)
+    #return render_template('projections.html')
 
 
 @app.route('/rankings', methods=['GET'])
 def rankings():
-    rank = 'https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/rankings.html'
+    rank = 'http://detroit.worlds.pennfirst.org/cache/Rankings_2018_World_Championship_Edison.html'
     rank_response = requests.get(rank, verify=False)
     rank_soup = bs(rank_response.text)
     rank_data = rank_soup.findAll('table')[0]
 
-    match = 'https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchresults.html'
+    match = 'http://detroit.worlds.pennfirst.org/cache/MatchResults_2018_World_Championship_Edison.html'
     match_response = requests.get(match, verify=False)
     match_soup = bs(match_response.text)
     match_data = match_soup.findAll('table')[0]
@@ -679,3 +668,4 @@ def delete_team_entry(id):
 
     flash('Team deleted.')
     return redirect(url_for('teams'))
+
