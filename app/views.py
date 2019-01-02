@@ -1,5 +1,5 @@
 from app import app, mysql
-from flask import render_template, flash, redirect, url_for, session, logging, request
+from flask import render_template, flash, redirect, url_for, session, request
 from forms import RegisterForm, ScoutingForm
 from functools import wraps
 from passlib.hash import sha256_crypt
