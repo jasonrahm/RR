@@ -1,242 +1,105 @@
-from flask_wtf import FlaskForm
-from models import Competitions
-from models import CompetitionTeam
-from models import Teams
-from models import Users
+from wtforms import Form
 from wtforms import BooleanField
-from wtforms import HiddenField
+from wtforms import IntegerField
 from wtforms import PasswordField
 from wtforms import SelectField
 from wtforms import StringField
-from wtforms import SubmitField
 from wtforms import validators
-from wtforms.fields.html5 import DateField
-from wtforms.fields.html5 import IntegerField
-from wtforms.widgets import TextArea
 
 
-class CompetitionsForm(FlaskForm):
-    name = StringField('Name',
-                       [validators.DataRequired(
-                           'Please enter the competition name.')])
-    date = DateField('Date',
-                     [validators.DataRequired(
-                         'Please enter the competition date.')],
-                     format='%Y-%m-%d')
-    submit = SubmitField('Add Competition')
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
+class RegisterForm(Form):
+    name = StringField('Name', [validators.Length(min=1, max=50)])
+    username = StringField('Username', [validators.Length(min=4, max=25)])
+    email = StringField('Email', [validators.Length(min=6, max=50)])
+    password = PasswordField('Password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirm', message='Passwords do not match')
+    ])
+    confirm = PasswordField('Confirm Password')
 
 
-class CompetitionTeamForm(FlaskForm):
-    competition = HiddenField('competition')
-    team = SelectField('Team', coerce=int)
-    submit = SubmitField('Add Team')
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
-        self.team.choices = [
-            (a.id, a.number) for a in Teams.query.order_by('number')]
-
-    def validate(self):
-        if not FlaskForm.validate(self):
-            return False
-
-        comp = Competitions.query.filter_by(name=self.competition).first()
-        checkteam = CompetitionTeam.query.filter(
-            (CompetitionTeam.competitions == comp.id) &
-            (CompetitionTeam.teams == self.team.data)).first()
-        if checkteam:
-            self.team.errors.append("Team is already part of this competition")
-            return False
-        else:
-            return True
-
-
-class LoginForm(FlaskForm):
-    email = StringField('Email', [validators.DataRequired()])
-    password = PasswordField('Password', [validators.DataRequired()])
-    remember_me = BooleanField("Remember me?", default=True)
-    submit = SubmitField('Sign In')
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
-
-    def validate(self):
-        if not FlaskForm.validate(self):
-            return False
-
-        self.user = Users.authenticate(self.email.data, self.password.data)
-        if not self.user:
-            self.email.errors.append("Invalid email or password")
-            return False
-
-        return True
-
-
-class ReportingForm(FlaskForm):
-    a_jewel = SelectField('Jewel (a)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    a_glyphs = SelectField('Glyphs (a)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    a_column = SelectField('Correct Column (a)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    a_park = SelectField('Park (a)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=1)
-    t_glyphs = SelectField('Glyphs (t)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=1)
-    t_columns = SelectField('Columns (t)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    t_rows = SelectField('Rows (t)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    t_cipher = SelectField('Cipher (t)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    t_relic1 = SelectField('Relic 1 (t)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    t_relic2 = SelectField('Relic 2 (t)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=3)
-    t_park = SelectField('Park (t)', choices=[
-        (0, 'Ignore'),
-        (1, 'Important'),
-        (3, 'Critical')], coerce=int, default=1)
-
-    submit = SubmitField('Run Report')
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
-
-
-class ScoringForm(FlaskForm):
-    team = SelectField('Team', coerce=int)
-    match_number = IntegerField('Match Number', [validators.NumberRange(min=1, max=100)], default=1)
-    a_hit_jewel = BooleanField('Hit correct jewel (a)?')
-    a_glyphs_delivered = IntegerField('Glyphs scored (a)?', default=0)
-    a_glyph_correct = BooleanField('Glyph correct column (a)?')
-    a_park = BooleanField('Safe Park (a)?')
-    t_glyphs_delivered = IntegerField('Glyphs scored (t)?', default=0)
-    t_crypto_columns = IntegerField('Crypto Columns (t)', default=0)
-    t_crypto_rows = IntegerField('Crypto Rows (t)?', default=0)
-    t_crypto_cipher = BooleanField('Cipher Completed (t)?')
-    t_relic1 = SelectField('Relic 1 Score (t)?',
-                            choices=[(0, 'No Score'),
-                                     (10, 'Zone 1'),
-                                     (25, 'Zone 1 - Upright'),
-                                     (20, 'Zone 2'),
-                                     (35, 'Zone 2 - Upright'),
-                                     (40, 'Zone 3'),
-                                     (55, 'Zone 3 - Upright')], coerce=int)
-    t_relic2 = SelectField('Relic 2 Score (t)?',
-                           choices=[(0, 'No Score'),
-                                    (10, 'Zone 1'),
-                                    (25, 'Zone 1 - Upright'),
-                                    (20, 'Zone 2'),
-                                    (35, 'Zone 2 - Upright'),
-                                    (40, 'Zone 3'),
-                                    (55, 'Zone 3 - Upright')], coerce=int)
-    t_park = BooleanField('Balanced Park (t)?')
-    a_score = IntegerField('Autonomous Score', default=0)
-    t_score = IntegerField('Teleop Score', default=0)
-    total_score = IntegerField('Total Score', default=0)
-    match_notes = StringField('Match Notes',
-                              [validators.Length(
-                                  max=500,
-                                  message='Max length 500 characters.')],
-                              widget=TextArea())
-
-    submit = SubmitField('Add Score')
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
-        self.team.choices = [
-            (a.id, a.number) for a in Teams.query.order_by('number')]
-
-
-class ScoutingForm(FlaskForm):
-    team = SelectField('Team', coerce=int)
-    a_jewel = BooleanField('Hit correct jewel (a)?')
-    a_glyphs = IntegerField('Glyphs scored (a)?', [validators.NumberRange(min=0, max=24)], default=0)
-    a_glyph_correct = BooleanField('Glyph correct column (a)?')
-    a_park = BooleanField('Safe Park (a)?')
-    t_glyphs = IntegerField('Glyphs scored (t)?', [validators.NumberRange(min=0, max=24)], default=0)
-    t_crypto_columns = IntegerField('Crypto Columns (t)?', [validators.NumberRange(min=0, max=6)], default=0)
-    t_crypto_rows = IntegerField('Crypto Rows (t)?', [validators.NumberRange(min=0, max=8)], default=0)
-    t_crypto_cipher = BooleanField('Cipher Completed (t)?')
-    t_relics = SelectField('How many relics can they score (t)?',
-                           choices=[(0, 'None'),
-                                    (1, 'One'),
-                                    (2, 'Two')], coerce=int)
-    t_relic1 = SelectField('Relic 1 (t)?',
-                                choices=[(0, 'Not Applicable'),
-                                         (10, 'Zone 1'),
-                                         (25, 'Zone 1 - Upright'),
-                                         (20, 'Zone 2'),
-                                         (35, 'Zone 2 - Upright'),
-                                         (40, 'Zone 3'),
-                                         (55, 'Zone 3 - Upright')], coerce=int)
-    t_relic2 = SelectField('Relic 2 (t)?',
-                           choices=[(0, 'Not Applicable'),
-                                    (10, 'Zone 1'),
-                                    (25, 'Zone 1 - Upright'),
-                                    (20, 'Zone 2'),
-                                    (35, 'Zone 2 - Upright'),
-                                    (40, 'Zone 3'),
-                                    (55, 'Zone 3 - Upright')], coerce=int)
-    t_park = BooleanField('Balanced Park (t)?')
-    score_projection = IntegerField('Score Projection', default=0)
-    notes = StringField('Notes',
-                        [validators.Length(
-                            max=500,
-                            message='Please limit to 500 characters.')],
-                        widget=TextArea())
-
-    submit = SubmitField('Add Scouting Report')
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
-        self.team.choices = [
-            (a.id, a.number) for a in Teams.query.order_by('number')]
-
-
-class TeamForm(FlaskForm):
-    number = IntegerField('Number',
-                          [validators.DataRequired(
-                              'Please enter the team number.')])
-    name = StringField('Name',
-                       [validators.DataRequired(
-                           'Please enter the team name.')])
-    submit = SubmitField('Add Team')
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
-
-    def validate(self):
-        if not FlaskForm.validate(self):
-            return False
-
-        checkteam = Teams.query.filter_by(number=self.number.data).first()
-        if checkteam:
-            self.number.errors.append("Team is already in the system.")
-            return False
-        else:
-            return True
+class ScoutingForm(Form):
+    team_number = IntegerField('Team Number')
+    team_name = StringField('Team Name', [validators.Length(min=1, max=50)])
+    comp = SelectField('Competition', choices=[
+        ('IL Southern Meet #1', 'IL Southern Meet #1'),
+        ('IL Southern Meet #2', 'IL Southern Meet #2'),
+        ('IL Southern Meet #3', 'IL Southern Meet #3'),
+        ('IL South/Central East Qualifier', 'IL South/Central East Qualifier'),
+        ('IL State', 'IL State'),
+        ('Detroit World Championships', 'Detroit World Championships'),
+    ])
+    a_lander_loc = SelectField('Lander Location Preference?', choices=[
+        ('Crater Side', 'Crater Side'),
+        ('Depot Side', 'Depot Side'),
+    ])
+    a_landed = BooleanField("Can They Land?", default=False)
+    a_landed_rel = SelectField("Landing Reliability?", choices=[
+        (0, '<50%'),
+        (1, '50'),
+        (2, '75'),
+        (3, '85'),
+        (5, '95'),
+    ], coerce=int)
+    a_sample = BooleanField("Can They Sample", default=False)
+    a_sample_rel = SelectField("Sampling Reliability?", choices=[
+        (0, '<50%'),
+        (1, '50'),
+        (2, '75'),
+        (3, '85'),
+        (5, '95'),
+    ], coerce=int)
+    a_marker = BooleanField("Can They Deliver the Marker?", default=False)
+    a_marker_rel = SelectField("Marker Reliability?", choices=[
+        (0, '<50%'),
+        (1, '50'),
+        (2, '75'),
+        (3, '85'),
+        (5, '95'),
+    ], coerce=int)
+    a_park = BooleanField("Can They Park?", default=False)
+    a_park_rel = SelectField("Parking Reliability?", choices=[
+        (0, '<50%'),
+        (1, '50'),
+        (2, '75'),
+        (3, '85'),
+        (5, '95'),
+    ], coerce=int)
+    a_compatible = SelectField("How Compatible Are They?", choices=[
+        (0, 'low'),
+        (1, 'medium'),
+        (3, 'high'),
+    ], coerce=int)
+    a_notes = StringField("Autonomous Notes", [validators.Length(max=500)])
+    t_score_lander = BooleanField("Can They Score in the Lander?", default=False)
+    t_mineral = SelectField("What Minerals Can They Score?", choices=[
+        ('Neither', 'Neither'),
+        ('Gold', 'Gold'),
+        ('Silver', 'Silver'),
+        ('Both', 'Both'),
+    ])
+    t_cycle = IntegerField("What is Their Cycle Time?")
+    t_load = SelectField("What is Their Load Size?", choices=[
+        (0, '0'),
+        (1, '1'),
+        (3, '2'),
+    ], coerce=int)
+    t_score_position = SelectField("Where is Their Preferred Scoring Position?", choices=[
+        ('Gold Center', 'Gold Center'),
+        ('Gold Corner', 'Gold Corner'),
+        ('Silver Center', 'Silver Center'),
+        ('Silver Corner', 'Silver Corner'),
+        ('Both Center', 'Both Center'),
+        ('Both Corner', 'Both Corner'),
+    ])
+    t_notes = StringField("TeleOp Notes", [validators.Length(max=500)])
+    e_hang = BooleanField("Can They Hang?", default=False)
+    e_hang_rel = SelectField("Hanging Reliability?", choices=[
+        (0, '<50%'),
+        (1, '50'),
+        (2, '75'),
+        (3, '85'),
+        (5, '95'),
+    ], coerce=int)
+    e_hangtime = IntegerField("How Many Seconds Remaining When They Hang?")
+    e_notes = StringField("Endgame Notes", [validators.Length(max=500)])

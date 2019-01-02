@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add Scouting Record</h1>
+    {% from "includes/_formhelpers.html" import render_field %}
+    <form method="POST" action="">
+        <div class="form-group">
+            {{ render_field(form.team_number, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.team_name, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.comp, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_lander_loc, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_landed, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_landed_rel, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_sample, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_sample_rel, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_marker, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_marker_rel, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_park, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_park_rel, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_compatible, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_notes, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_score_lander, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_mineral, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_cycle, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_load, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_score_position, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_notes, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.e_hang, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.e_hang_rel, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.e_hangtime, class_="form-control") }}
+        </div>
+                <div class="form-group">
+            {{ render_field(form.e_notes, class_="form-control") }}
+        </div>
+        <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+    </form>
+
+
+{% endblock %}

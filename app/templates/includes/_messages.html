@@ -1,0 +1,27 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+
+    {% endif %}
+{% endwith %}
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+{% if msg %}
+    <div class="alert alert-success">{{ msg }}</div>
+{% endif %}
+
+{##}
+{#    {% with messages = get_flashed_messages() %}#}
+{#        {% if messages %}#}
+{#            <ul class="list-group">#}
+{#                {% for message in messages %}#}
+{#                    <li class="list-group-item-info text-center">{{ message }}</li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        {% endif %}#}
+{#    {% endwith %}#}
