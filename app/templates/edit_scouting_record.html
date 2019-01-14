@@ -3,6 +3,7 @@
 {% block content %}
     <h1>Edit Scouting Record</h1>
     {% from "includes/_formhelpers.html" import render_field %}
+    {% from "includes/_formhelpers.html" import render_booleanfield %}
     <form method="POST" action="">
         <div class="form-group">
             {{ render_field(form.team_number, class_="form-control") }}
@@ -17,25 +18,25 @@
             {{ render_field(form.a_lander_loc, class_="form-control") }}
         </div>
         <div class="form-group">
-            {{ render_field(form.a_landed, class_="form-control") }}
+            {{ render_booleanfield(form.a_landed) }}
         </div>
         <div class="form-group">
             {{ render_field(form.a_landed_rel, class_="form-control") }}
         </div>
         <div class="form-group">
-            {{ render_field(form.a_sample, class_="form-control") }}
+            {{ render_booleanfield(form.a_sample) }}
         </div>
         <div class="form-group">
             {{ render_field(form.a_sample_rel, class_="form-control") }}
         </div>
         <div class="form-group">
-            {{ render_field(form.a_marker, class_="form-control") }}
+            {{ render_booleanfield(form.a_marker) }}
         </div>
         <div class="form-group">
             {{ render_field(form.a_marker_rel, class_="form-control") }}
         </div>
         <div class="form-group">
-            {{ render_field(form.a_park, class_="form-control") }}
+            {{ render_booleanfield(form.a_park) }}
         </div>
         <div class="form-group">
             {{ render_field(form.a_park_rel, class_="form-control") }}
@@ -47,7 +48,7 @@
             {{ render_field(form.a_notes, class_="form-control") }}
         </div>
         <div class="form-group">
-            {{ render_field(form.t_score_lander, class_="form-control") }}
+            {{ render_booleanfield(form.t_score_lander) }}
         </div>
         <div class="form-group">
             {{ render_field(form.t_mineral, class_="form-control") }}
@@ -65,7 +66,7 @@
             {{ render_field(form.t_notes, class_="form-control") }}
         </div>
         <div class="form-group">
-            {{ render_field(form.e_hang, class_="form-control") }}
+            {{ render_booleanfield(form.e_hang) }}
         </div>
         <div class="form-group">
             {{ render_field(form.e_hang_rel, class_="form-control") }}

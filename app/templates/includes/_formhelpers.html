@@ -7,3 +7,7 @@
         {% endfor %}
     {% endif %}
 {% endmacro %}
+
+{% macro render_booleanfield(field, status=False) %}
+    {{ field(checked=status) }} {{ field.label }}
+{% endmacro %}

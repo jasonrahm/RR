@@ -1,6 +1,6 @@
 from app import app, mysql
 from flask import render_template, flash, redirect, url_for, session, request
-from forms import RegisterForm, ScoutingForm
+from forms import RegisterForm, ScoutingForm, ScoutingReportForm
 from functools import wraps
 from passlib.hash import sha256_crypt
 
@@ -288,3 +288,81 @@ def delete_scouting_record(id):
 
     flash('Scouting record deleted', 'success')
     return redirect(url_for('dashboard'))
+
+
+@app.route('/run_scouting_report', methods=['GET', 'POST'])
+@is_logged_in
+def run_scouting_report():
+    form = ScoutingReportForm(request.form)
+    if request.method == 'POST':
+        competition = request.form['comp']
+        landing = request.form['landing']
+        landing_rel = (False, True)[request.form.get('landing_rel', '') == u'y']
+        sampling = request.form['sampling']
+        sampling_rel = (False, True)[request.form.get('sampling_rel', '') == u'y']
+        marker = request.form['marker']
+        marker_rel = (False, True)[request.form.get('marker_rel', '') == u'y']
+        parking = request.form['parking']
+        parking_rel = (False, True)[request.form.get('parking_rel', '') == u'y']
+        compatibility = request.form['compatibility']
+        lander_scoring = request.form['lander_scoring']
+        cycle_time = request.form['cycle_time']
+        load_size = request.form['load_size']
+        hanging = request.form['hanging']
+        hanging_rel = (False, True)[request.form.get('hanging_rel', '') == u'y']
+
+        sql_text = '''select comp, team_number, team_name,
+                        (a_landed * {}) * (1 + a_landed_rel * {}) +
+                        (a_sample * {}) * (1 + a_sample_rel * {}) +
+                        (a_marker * {}) * (1 + a_marker_rel * {}) +
+                        (a_park * {}) * (1 + a_park_rel * {}) + 
+                        (a_compatible * {}) + 
+                        (t_score_lander * {}) +
+                        (t_cycle * {}) + 
+                        (t_load * {}) +
+                        (e_hang * {}) * (1 + e_hang_rel * {})
+                      AS Score
+                      FROM scouting
+                      WHERE comp = '{}'
+                      ORDER BY Score
+                      DESC'''.format(int(landing),
+                                 1 if landing_rel is True else 0,
+                                 int(sampling),
+                                 1 if sampling_rel is True else 0,
+                                 int(marker),
+                                 1 if marker_rel is True else 0,
+                                 int(parking),
+                                 1 if parking_rel is True else 0,
+                                 int(compatibility),
+                                 int(lander_scoring),
+                                 int(cycle_time),
+                                 int(load_size),
+                                 int(hanging),
+                                 1 if hanging_rel is True else 0,
+                                 competition)
+        cur = mysql.connection.cursor()
+        result = cur.execute(sql_text)
+        if result > 0:
+            records = cur.fetchall()
+            teams = []
+            for row in records:
+                teams.append([row['comp'], row['team_number'], row['team_name'], row['Score']])
+            session['scouting_report'] = teams
+            flash('Report run succesfully', 'success')
+            return redirect(url_for('scouting_report'))
+        else:
+            flash('No records found', 'error')
+
+        cur.close()
+
+    return render_template('run_scouting_report.html', form=form)
+
+
+@app.route('/scouting_report', methods=['GET'])
+@is_logged_in
+def scouting_report():
+    data = session['scouting_report']
+    if data == '':
+        redirect(url_for('run_scouting_report'))
+    else:
+        return render_template('scouting_report.html', data=data)
