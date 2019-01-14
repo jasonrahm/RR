@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+    <p></p>
+    <h1>Scouting Report</h1>
+    <small>(Competition: {{ data[0][0] }})</small>
+    <hr>
+    <table id="scoutingreport" class="tablesorter">
+    <thead>
+        <tr>
+            <th>Team Number</th>
+            <th>Team Name</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for record in data %}
+        <tr>
+            <td>{{ record[1] }}</td>
+            <td>{{ record[2] }}</td>
+            <td>{{ record[3] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+
+{% endblock %}
