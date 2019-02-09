@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h1>Team Scoring Report</h1>
+    <hr>
+
+    <table id="scoringreport", class="tablesorter">
+    <thead>
+    <tr>
+        <th>Team</th>
+        <th>Max</th>
+        <th>Avg</th>
+        <th>Auto</th>
+        <th>TeleOp</th>
+        <th>Endgame</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for x in data %}
+    <tr>
+        <td><a href="team/{{ x[0] }}">{{ x[0] }}</a></td>
+        <td>{{ x[1] }}</td>
+        <td>{{ '{0:0.2f}'.format(x[2]) }}</td>
+        <td>{{ '{0:0.2f}'.format(x[3]) }}</td>
+        <td>{{ '{0:0.2f}'.format(x[4]) }}</td>
+        <td>{{ '{0:0.2f}'.format(x[5]) }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add Scoring Record</h1>
+    {% from "includes/_formhelpers.html" import render_field %}
+    <form method="POST" action="">
+        <div class="form-group">
+            {{ render_field(form.comp, class_="form-group") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.match, class_="form-group") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.r1, class_="form-group") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.r2, class_="form-group") }}
+        </div>
+        <h2>Autonomous</h2>
+        <div class="row">
+        <div class="outerDivFull" >
+            <h3><strong>Landing</strong></h3>
+            <div class="switchToggle col-xs-6">
+                R1 {{ form.a_r1_land(id="r1land_switch") }}
+                {{ form.a_r1_land.label(for="r1land_switch") }}
+            </div>
+            <div class="switchToggle col-xs-6">
+                R2 {{ form.a_r2_land(id="r2land_switch") }}
+                {{ form.a_r2_land.label(for="r2land_switch") }}
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="outerDivFull">
+            <h3><strong>Sampling</strong></h3>
+            <div class="switchToggle col-xs-6">
+                R1 {{ form.a_r1_sample(id="r1sample_switch") }}
+                {{ form.a_r1_sample.label(for="r1sample_switch") }}
+            </div>
+            <div class="switchToggle col-xs-6">
+                R2 {{ form.a_r2_sample(id="r2sample_switch") }}
+                {{ form.a_r2_sample.label(for="r2sample_switch") }}
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="outerDivFull" >
+            <h3><strong>Depot Claiming</strong></h3>
+            <div class="switchToggle col-xs-6">
+                R1 {{ form.a_r1_depot(id="r1depot_switch") }}
+                {{ form.a_r1_depot.label(for="r1depot_switch") }}
+            </div>
+            <div class="switchToggle col-xs-6">
+                R2 {{ form.a_r2_depot(id="r2depot_switch") }}
+                {{ form.a_r2_depot.label(for="r2depot_switch") }}
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="outerDivFull">
+            <h3><strong>Parking</strong></h3>
+            <div class="switchToggle col-xs-6">
+                R1 {{ form.a_r1_park(id="r1park_switch") }}
+                {{ form.a_r1_sample.label(for="r1park_switch") }}
+            </div>
+            <div class="switchToggle col-xs-6">
+                R2 {{ form.a_r2_park(id="r2park_switch") }}
+                {{ form.a_r2_park.label(for="r2park_switch") }}
+            </div>
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.a_r1_auto_score, class_="form-group") }}
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.a_r2_auto_score, class_="form-group") }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.a_r1_notes, class_="form-control") }}
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.a_r2_notes, class_="form-control") }}
+            </div>
+        </div>
+        <h2>TeleOp</h2>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.t_r1_lander_minerals, class_="form-group") }} <button id="r1_lander_incr" class="btn btn-success" type="button">+</button> <button id="r1_lander_decr" class="btn btn-danger" type="button">-</button>
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.t_r2_lander_minerals, class_="form-group") }} <button id="r2_lander_incr" class="btn btn-success" type="button">+</button> <button id="r2_lander_decr" class="btn btn-danger" type="button">-</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.t_r1_depot_minerals, class_="form-group") }} <button id="r1_depot_incr" class="btn btn-success" type="button">+</button> <button id="r1_depot_decr" class="btn btn-danger" type="button">-</button>
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.t_r2_depot_minerals, class_="form-group") }} <button id="r2_depot_incr" class="btn btn-success" type="button">+</button> <button id="r2_depot_decr" class="btn btn-danger" type="button">-</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.t_r1_teleop_score, class_="form-group") }}
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.t_r2_teleop_score, class_="form-group") }}
+            </div>
+        </div>
+        <h2>EndGame</h2>
+        <div class="row">
+        <div class="outerDivFull">
+            <h3><strong>Hanging</strong></h3>
+            <div class="switchToggle col-xs-6">
+                R1 {{ form.e_r1_latched(id="r1latched_switch") }}
+                {{ form.e_r1_latched.label(for="r1latched_switch") }}
+            </div>
+            <div class="switchToggle col-xs-6">
+                R2 {{ form.e_r2_latched(id="r2latched_switch") }}
+                {{ form.e_r2_latched.label(for="r2latched_switch") }}
+            </div>
+        </div>
+        </div>
+            <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.e_r1_park, class_="form-group") }}
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.e_r2_park, class_="form-group") }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.e_r1_endgame_score, class_="form-group") }}
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.e_r2_endgame_score, class_="form-group") }}
+            </div>
+        </div>
+        <h2>Overall</h2>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.r1_total_score, class_="form-group") }}
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.r2_total_score, class_="form-group") }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                {{ render_field(form.e_r1_notes, class_="form-control") }}
+            </div>
+            <div class="col-xs-6">
+                {{ render_field(form.e_r2_notes, class_="form-control") }}
+            </div>
+        </div>
+        <p><p><input type="submit" class="btn btn-primary" value="Submit"></p></p>
+
+    </form>
+
+
+{% endblock %}

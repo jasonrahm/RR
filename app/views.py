@@ -1,6 +1,6 @@
 from app import app, mysql
 from flask import render_template, flash, redirect, url_for, session, request
-from forms import RegisterForm, ScoutingForm, ScoutingReportForm
+from forms import RegisterForm, ScoutingForm, ScoutingReportForm, ScoringForm, ScoringEditForm, ScoringReportForm
 from functools import wraps
 from passlib.hash import sha256_crypt
 
@@ -132,13 +132,22 @@ def register():
 def dashboard():
 
     cur = mysql.connection.cursor()
-    result = cur.execute('SELECT * FROM scouting')
+    scouting_result = cur.execute('SELECT * FROM scouting')
+    if scouting_result > 0:
+        scouting_records = cur.fetchall()
 
-    if result > 0:
-        records = cur.fetchall()
-        return render_template('dashboard.html', records=records)
+    scoring_result = cur.execute('SELECT * FROM scoring')
+    if scoring_result > 0:
+        scoring_records = cur.fetchall()
+
+    if scouting_result > 0 and scoring_result > 0:
+        return render_template('dashboard.html', scouting_records=scouting_records, scoring_records=scoring_records)
+    elif scouting_result > 0:
+        return render_template('dashboard.html', scouting_records=scouting_records)
+    elif scoring_result > 0:
+        return render_template('dashboard.html', scoring_records=scoring_records)
     else:
-        msg = 'No Scouting Records Found'
+        msg = 'No Records Found'
         return render_template('dashboard.html', msg=msg)
 
     cur.close()
@@ -366,3 +375,203 @@ def scouting_report():
         redirect(url_for('run_scouting_report'))
     else:
         return render_template('scouting_report.html', data=data)
+
+
+@app.route('/add_scoring_record', methods=['GET', 'POST'])
+@is_logged_in
+def add_scoring_record():
+    form = ScoringForm(request.form)
+
+    if request.method == 'POST':
+        comp = form.comp.data
+        match = form.match.data
+        r1_team = form.r1.data
+        r2_team = form.r2.data
+        a_r1_land = form.a_r1_land.data
+        a_r1_sample = form.a_r1_sample.data
+        a_r1_depot = form.a_r1_depot.data
+        a_r1_park = form.a_r1_park.data
+        a_r1_auto_score = form.a_r1_auto_score.data
+        a_r1_notes = form.a_r1_notes.data
+        a_r2_land = form.a_r2_land.data
+        a_r2_sample = form.a_r2_sample.data
+        a_r2_depot = form.a_r2_depot.data
+        a_r2_park = form.a_r2_park.data
+        a_r2_auto_score = form.a_r2_auto_score.data
+        a_r2_notes = form.a_r2_notes.data
+        t_r1_lander_minerals = form.t_r1_lander_minerals.data
+        t_r1_depot_minerals = form.t_r1_depot_minerals.data
+        t_r1_teleop_score = form.t_r1_teleop_score.data
+        t_r2_lander_minerals = form.t_r2_lander_minerals.data
+        t_r2_depot_minerals = form.t_r2_depot_minerals.data
+        t_r2_teleop_score = form.t_r2_teleop_score.data
+        e_r1_latched = form.e_r1_latched.data
+        e_r1_park = form.e_r1_park.data
+        e_r1_endgame_score = form.e_r1_endgame_score.data
+        e_r2_latched = form.e_r2_latched.data
+        e_r2_park = form.e_r2_park.data
+        e_r2_endgame_score = form.e_r2_endgame_score.data
+        r1_total_score = form.r1_total_score.data
+        r2_total_score = form.r2_total_score.data
+        e_r1_notes = form.e_r1_notes.data
+        e_r2_notes = form.e_r2_notes.data
+
+        # cols = '(comp, match_num, team_num, land, sample, depot, a_park, a_score, crater_minerals, depot_minerals, t_score, latched, e_park, e_score, score)'
+
+
+        sql_text = "INSERT INTO scoring(scout, comp, match_num, team_num, land, sample, depot, a_park, a_score, a_notes, lander_minerals, depot_minerals, t_score, latched, e_park, e_score, score, e_notes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        lstval = [(session['username'], comp, match, int(r1_team), int(a_r1_land), int(a_r1_sample), int(a_r1_depot), int(a_r1_park),
+                 int(a_r1_auto_score), a_r1_notes, int(t_r1_lander_minerals),
+                 int(t_r1_depot_minerals), int(t_r1_teleop_score), int(e_r1_latched), int(e_r1_park),
+                 int(e_r1_endgame_score), int(r1_total_score), e_r1_notes),
+                 (session['username'], comp, match, int(r2_team), int(a_r2_land), int(a_r2_sample), int(a_r2_depot), int(a_r2_park),
+                 int(a_r2_auto_score), a_r2_notes, int(t_r2_lander_minerals),
+                 int(t_r2_depot_minerals), int(t_r2_teleop_score), int(e_r2_latched), int(e_r2_park),
+                 int(e_r2_endgame_score), int(r2_total_score), e_r2_notes)
+                ]
+
+        cur = mysql.connection.cursor()
+        cur.executemany(sql_text, lstval)
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Scoring records created', 'success')
+
+        return redirect(url_for('dashboard'))
+
+    return render_template('add_scoring_record.html', form=form)
+
+
+@app.route('/delete_scoring_record/<string:id>', methods=['POST'])
+@is_logged_in
+def delete_scoring_record(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM scoring WHERE id = %s", [id])
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Scoring record deleted', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/edit_scoring_record/<string:id>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_scoring_record(id):
+    cur = mysql.connection.cursor()
+    result = cur.execute("SELECT * FROM scoring WHERE id = %s", [id])
+    scoring_record = cur.fetchone()
+
+    form = ScoringEditForm(request.form)
+    form.comp.data = scoring_record['comp']
+    form.match.data = scoring_record['match_num']
+    form.team.data = scoring_record['team_num']
+    form.a_land.data = scoring_record['land']
+    form.a_sample.data = scoring_record['sample']
+    form.a_depot.data = scoring_record['depot']
+    form.a_park.data = scoring_record['a_park']
+    form.a_score.data = scoring_record['a_score']
+    form.a_notes.data = scoring_record['a_notes']
+    form.t_lander_minerals.data = scoring_record['lander_minerals']
+    form.t_depot_minerals.data = scoring_record['depot_minerals']
+    form.t_score.data = scoring_record['t_score']
+    form.e_latched.data = scoring_record['latched']
+    form.e_park.data = scoring_record['e_park']
+    form.e_score.data = scoring_record['e_score']
+    form.total_score.data = scoring_record['score']
+    form.e_notes.data = scoring_record['e_notes']
+
+    if request.method == 'POST' and form.validate():
+        comp = request.form['comp']
+        match_num = request.form['match']
+        team_num = request.form['team']
+        land = (False, True)[request.form.get('a_land', '') == u'y']
+        sample = (False, True)[request.form.get('a_sample', '') == u'y']
+        depot = (False, True)[request.form.get('a_depot', '') == u'y']
+        a_park = (False, True)[request.form.get('a_park', '') == u'y']
+        a_score = request.form['a_score']
+        a_notes = request.form['a_notes']
+        lander_minerals = request.form['t_lander_minerals']
+        depot_minerals = request.form['t_depot_minerals']
+        t_score = request.form['t_score']
+        latched = (False, True)[request.form.get('e_latched', '') == u'y']
+        e_park = request.form['e_park']
+        e_score = request.form['e_score']
+        score = request.form['total_score']
+        e_notes = request.form['e_notes']
+
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE scoring SET comp=%s, match_num=%s, team_num=%s, land=%s, sample=%s, "
+                    "depot=%s, a_park=%s, a_score=%s, a_notes=%s, lander_minerals=%s, depot_minerals=%s, "
+                    "t_score=%s, latched=%s, e_park=%s, e_score=%s, score=%s, e_notes=%s "
+                    "WHERE id = %s", (comp, match_num, team_num, land, sample, depot, a_park, a_score, a_notes, lander_minerals,
+                                      depot_minerals, t_score, latched, e_park, e_score, score, e_notes, id))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Scoring record updated', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('edit_scoring_record.html', form=form)
+
+
+@app.route('/run_scoring_report', methods=['GET', 'POST'])
+@is_logged_in
+def run_scoring_report():
+    form = ScoringReportForm(request.form)
+
+    if request.method == 'POST':
+        comp = request.form['comp']
+
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT DISTINCT team_num FROM scoring where comp=%s', [comp])
+        teams = cur.fetchall()
+
+        data = []
+        for x in teams:
+            cur.execute('SELECT team_num, avg(a_score), avg(t_score), avg(e_score), avg(score), max(score) '
+                        'from scoring where team_num=%s and comp=%s', [x['team_num'], comp])
+            result = cur.fetchall()
+            for row in result:
+                # Order: team, max score, avg score, avg auto score, avg teleop score, avg endgame score
+                data.append([row['team_num'], row['max(score)'],
+                             float(row['avg(score)']),
+                             float(row['avg(a_score)']),
+                             float(row['avg(t_score)']),
+                             float(row['avg(e_score)'])]
+                )
+
+        cur.close()
+
+        session['scoring_report'] = data
+
+        flash('Scoring report ran successfully', 'success')
+
+        return redirect(url_for('scoring_report'))
+
+
+    return render_template('run_scoring_report.html', form=form)
+
+
+@app.route('/scoring_report', methods=['GET'])
+@is_logged_in
+def scoring_report():
+    data = session['scoring_report']
+    if data == '':
+        redirect(url_for('run_scoring_report'))
+    else:
+        return render_template('scoring_report.html', data=data)
+
+
+@app.route('/team/<string:id>', methods=['GET'])
+@is_logged_in
+def team(id):
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM scouting where team_number=%s", [id])
+    scouting_records = cur.fetchall()
+    cur.execute("SELECT * FROM scoring where team_num=%s", [id])
+    scoring_records = cur.fetchall()
+    cur.close()
+
+    return render_template('team.html', id=id, scouting_records=scouting_records, scoring_records=scoring_records)
+

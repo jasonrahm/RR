@@ -1,101 +1,166 @@
-// var a1 = 0;
-// var a1m = 0;
-// var a2 = 0;
-// var a2m = 0;
-// var a3 = 0;
-// var a4 = 0;
-// var t1 = 0;
-// var t1m = 0;
-// var t2 = 0;
-// var t3 = 0;
-// var t4 = 0;
-// var t5 = 0;
-// var t5m = 0;
-// var t6 = 0;
+var a_r1_land = 0;
+var a_r2_land = 0;
+var a_r1_sample = 0;
+var a_r2_sample = 0;
+var a_r1_depot = 0;
+var a_r2_depot = 0;
+var a_r1_park = 0;
+var a_r2_park = 0;
+var r1_lander_counter = 0;
+var r1_depot_counter = 0;
+var t_r1_score_counter = 0;
+var r2_lander_counter = 0;
+var r2_depot_counter = 0;
+var t_r2_score_counter = 0;
+var e_r1_park_previous = 0;
+var e_r1_score_counter = 0;
+var e_r2_park_previous = 0;
+var e_r2_score_counter = 0;
 
 jQuery(document).ready(function() {
-    // $("#a_jewel").change( function() {
-    //    if ( $(this).is(":checked") ) {
-    //        a1 = 30;
-    //    } else { a1 = 0; }
-    // });
-    // $("#a_glyphs").change( function() {
-    //     a2 = parseInt($(this).val()) * 15;
-    // });
-    // $("#a_hit_jewel").change( function() {
-    //    if ( $(this).is(":checked") ) {
-    //        a1m = 30;
-    //    } else { a1m = 0; }
-    // });
-    // $("#a_glyphs_delivered").change( function() {
-    //     a2m = parseInt($(this).val()) * 15;
-    // });
-    // $("#a_glyph_correct").change( function() {
-    //    if ( $(this).is(":checked") ) {
-    //        a3 = 30;
-    //    } else { a3 = 0; }
-    // });
-    // $("#a_park").change( function() {
-    //    if ( $(this).is(":checked") ) {
-    //        a4 = 10;
-    //    } else { a4 = 0; }
-    // });
-    // $("#t_glyphs").change( function() {
-    //     t1 = parseInt($(this).val()) * 2;
-    // });
-    // $("#t_glyphs_delivered").change( function() {
-    //     t1m = parseInt($(this).val()) * 2;
-    // });
-    // $("#t_crypto_columns").change( function() {
-    //     t2 = parseInt($(this).val()) * 20;
-    // });
-    // $("#t_crypto_rows").change( function() {
-    //     t3 = parseInt($(this).val()) * 10;
-    // });
-    // $("#t_crypto_cipher").change( function() {
-    //    if ( $(this).is(":checked") ) {
-    //        t4 = 30;
-    //    } else { t4 = 0; }
-    // });
-    // $("select[name=t_relic1]").change(function() {
-    //     t5 = parseInt($(this).val());
-    //     $('#score_projection').trigger('change');
-    //     $('#t_score').trigger('change');
-    //     $('#total_score').trigger('change');
-    // });
-    // $("select[name=t_relic2]").change(function() {
-    //     t5m = parseInt($(this).val());
-    //     $('#score_projection').trigger('change');
-    //     $('#t_score').trigger('change');
-    //     $('#total_score').trigger('change');
-    // });
-    // $("#t_park").change( function() {
-    //    if ( $(this).is(":checked") ) {
-    //        t6 = 20;
-    //    } else { t6 = 0; }
-    // });
-    // $("input").change(function(){
-    //     // console.log(a1, a2, a3, a4, t1, t2, t3, t4, t5, t6 );
-    //     $("#score_projection").val(a1 + a2 + a3 + a4 + t1 + t2 + t3 + t4 + t5 + t5m + t6);
-    // });
-    // $("input").change(function(){
-    //    $("#a_score").val(a1m + a2m + a3 + a4);
-    // });
-    // $("input").change(function(){
-    //    $("#t_score").val(t1m + t2 + t3 + t4 + t5 + t5m + t6);
-    // });
-    // $("input").change(function(){
-    //    $("#total_score").val(a1m + a2m + a3 + a4 + t1m + t2 + t3 + t4 + t5 + t5m + t6);
-    // });
-    //
-    // $("#matchreport").tablesorter({
-    //         sortList: [[1,1]] // etc.
-    //
-    // });
-    // $("#pitreport").tablesorter({
-    //     sortList: [[1,1]]
-    // });
-    //
+    $("#r1land_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r1_land = 30;
+       } else { a_r1_land = 0; }
+    });
+    $("#r2land_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r2_land = 30;
+       } else { a_r2_land = 0; }
+    });
+    $("#r1sample_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r1_sample = 25;
+       } else { a_r1_sample = 0; }
+    });
+    $("#r2sample_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r2_sample = 25;
+       } else { a_r2_sample = 0; }
+    });
+    $("#r1depot_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r1_depot = 15;
+       } else { a_r1_depot = 0; }
+    });
+    $("#r2depot_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r2_depot = 15;
+       } else { a_r2_depot = 0; }
+    });
+    $("#r1park_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r1_park = 10;
+       } else { a_r1_park = 0; }
+    });
+    $("#r2park_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           a_r2_park = 10;
+       } else { a_r2_park = 0; }
+    });
+    $("#r1_lander_incr").click(function(){
+        r1_lander_counter+=1;
+        t_r1_score_counter+=5;
+        $("#t_r1_lander_minerals").val(r1_lander_counter);
+        $("#t_r1_teleop_score").val(t_r1_score_counter);
+        $("#t_r1_teleop_score").trigger("change");
+    });
+    $("#r1_lander_decr").click(function(){
+        r1_lander_counter-=1;
+        t_r1_score_counter-=5;
+        $("#t_r1_lander_minerals").val(r1_lander_counter);
+        $("#t_r1_teleop_score").val(t_r1_score_counter);
+        $("#t_r1_teleop_score").trigger("change");
+    });
+    $("#r1_depot_incr").click(function(){
+        r1_depot_counter+=1;
+        t_r1_score_counter+=2;
+        $("#t_r1_depot_minerals").val(r1_depot_counter);
+        $("#t_r1_teleop_score").val(t_r1_score_counter);
+        $("#t_r1_teleop_score").trigger("change");
+    });
+    $("#r1_depot_decr").click(function(){
+        r1_depot_counter-=1;
+        t_r1_score_counter-=2;
+        $("#t_r1_depot_minerals").val(r1_depot_counter);
+        $("#t_r1_teleop_score").val(t_r1_score_counter);
+        $("#t_r1_teleop_score").trigger("change");
+    });
+    $("#r2_lander_incr").click(function(){
+        r2_lander_counter+=1;
+        t_r2_score_counter+=5;
+        $("#t_r2_lander_minerals").val(r2_lander_counter);
+        $("#t_r2_teleop_score").val(t_r2_score_counter);
+        $("#t_r2_teleop_score").trigger("change");
+    });
+    $("#r2_lander_decr").click(function(){
+        r2_lander_counter-=1;
+        t_r2_score_counter-=5;
+        $("#t_r2_lander_minerals").val(r2_lander_counter);
+        $("#t_r2_teleop_score").val(t_r2_score_counter);
+        $("#t_r2_teleop_score").trigger("change");
+    });
+    $("#r2_depot_incr").click(function(){
+        r2_depot_counter+=1;
+        t_r2_score_counter+=2;
+        $("#t_r2_depot_minerals").val(r2_depot_counter);
+        $("#t_r2_teleop_score").val(t_r2_score_counter);
+        $("#t_r2_teleop_score").trigger("change");
+    });
+    $("#r2_depot_decr").click(function(){
+        r2_depot_counter-=1;
+        t_r2_score_counter-=2;
+        $("#t_r2_depot_minerals").val(r2_depot_counter);
+        $("#t_r2_teleop_score").val(t_r2_score_counter);
+        $("#t_r2_teleop_score").trigger("change");
+    });
+    $("select[name=e_r1_park]").focus(function () {
+        e_r1_park_previous = this.value;
+    }).change(function() {
+        e_r1_score_counter+=(this.value - e_r1_park_previous);
+        $("#e_r1_endgame_score").val(e_r1_score_counter);
+        $('#e_r1_endgame_score').trigger('change');
+        e_r1_park_previous = this.value;
+    });
+    $("select[name=e_r2_park]").focus(function () {
+        e_r2_park_previous = this.value;
+    }).change(function() {
+        e_r2_score_counter+=(this.value - e_r2_park_previous);
+        $("#e_r2_endgame_score").val(e_r2_score_counter);
+        $('#e_r2_endgame_score').trigger('change');
+        e_r2_park_previous = this.value;
+    });
+    $("#r1latched_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           e_r1_score_counter += 50;
+       } else { e_r1_score_counter -= 50; }
+       $("#e_r1_endgame_score").val(e_r1_score_counter);
+       $('#e_r1_endgame_score').trigger('change');
+       e_r1_park_previous = this.value;
+    });
+    $("#r2latched_switch").change( function() {
+       if ( $(this).is(":checked") ) {
+           e_r2_score_counter += 50;
+       } else { e_r2_score_counter -= 50; }
+       $("#e_r2_endgame_score").val(e_r2_score_counter);
+       $('#e_r2_endgame_score').trigger('change');
+       e_r2_park_previous = this.value;
+    });
+
+
+    $("input").change(function(){
+       $("#a_r1_auto_score").val(a_r1_land + a_r1_sample + a_r1_depot + a_r1_park);
+    });
+    $("input").change(function(){
+       $("#a_r2_auto_score").val(a_r2_land + a_r2_sample + a_r2_depot + a_r2_park);
+    });
+    $("input").change(function(){
+       $("#r1_total_score").val(a_r1_land + a_r1_sample + a_r1_depot + a_r1_park + t_r1_score_counter + e_r1_score_counter);
+    });
+    $("input").change(function(){
+       $("#r2_total_score").val(a_r2_land + a_r2_sample + a_r2_depot + a_r2_park + t_r2_score_counter + e_r2_score_counter);
+    });
+
     // $('table.sticky-header').floatThead();
 
     // Sorting Tables
@@ -104,6 +169,9 @@ jQuery(document).ready(function() {
     });
     $("#scoutingreport").tablesorter({
         sortList: [[4,0]]
+    });
+    $("#scoringreport").tablesorter({
+        sortList: [[2,0]]
     });
 
 });

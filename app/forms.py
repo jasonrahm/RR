@@ -4,6 +4,7 @@ from wtforms import IntegerField
 from wtforms import PasswordField
 from wtforms import SelectField
 from wtforms import StringField
+from wtforms import TextAreaField
 from wtforms import validators
 
 
@@ -26,7 +27,7 @@ class ScoutingForm(Form):
         ('Qualifier', 'Qualifier'),
         ('State', 'State'),
         ('Worlds', 'Worlds'),
-    ])
+    ], default='Qualifier')
     a_lander_loc = SelectField('Lander Location Preference?', choices=[
         ('Crater Side', 'Crater Side'),
         ('Depot Side', 'Depot Side'),
@@ -69,7 +70,7 @@ class ScoutingForm(Form):
         (3, 'medium'),
         (5, 'high'),
     ], coerce=int)
-    a_notes = StringField("Autonomous Notes", [validators.Length(max=500)])
+    a_notes = TextAreaField("Autonomous Notes", [validators.Length(max=500)])
     t_score_lander = BooleanField("Can They Score in the Lander?", default=False)
     t_mineral = SelectField("What Minerals Can They Score?", choices=[
         ('Neither', 'Neither'),
@@ -97,7 +98,7 @@ class ScoutingForm(Form):
         ('Both Center', 'Both Center'),
         ('Both Corner', 'Both Corner'),
     ])
-    t_notes = StringField("TeleOp Notes", [validators.Length(max=500)])
+    t_notes = TextAreaField("TeleOp Notes", [validators.Length(max=500)])
     e_hang = BooleanField("Can They Hang?", default=False)
     e_hang_rel = SelectField("Hanging Reliability", choices=[
         (0, '<50%'),
@@ -107,7 +108,7 @@ class ScoutingForm(Form):
         (.95, '95'),
     ], coerce=float)
     e_hangtime = IntegerField("How Many Seconds Remaining When They Hang?", default=0)
-    e_notes = StringField("Endgame Notes", [validators.Length(max=500)])
+    e_notes = TextAreaField("Endgame Notes", [validators.Length(max=500)])
 
 
 class ScoutingReportForm(Form):
@@ -116,7 +117,7 @@ class ScoutingReportForm(Form):
         ('Qualifier', 'Qualifier'),
         ('State', 'State'),
         ('Worlds', 'Worlds'),
-    ])
+    ], default='Qualifier')
     landing = SelectField('Landing',
                        choices=[(0, 'Ignore'),
                                 (1, 'Important'),
@@ -176,3 +177,124 @@ class ScoutingReportForm(Form):
                           coerce=int,
                           default=4)
     hanging_rel = BooleanField('Hanging Reliability', default=True)
+
+
+class ScoringForm(Form):
+    comp = SelectField('Competition', choices=[
+        ('Meet3', 'Meet3'),
+        ('Qualifier', 'Qualifier'),
+        ('State', 'State'),
+        ('Worlds', 'Worlds'),
+    ], default='Qualifier')
+    match = StringField("Match #")
+    r1 = IntegerField("Team #1")
+    r2 = IntegerField("Team #2")
+    # Autonomous
+    a_r1_land = BooleanField('R1 Landing')
+    a_r1_sample = BooleanField('R1 Sampling')
+    a_r1_depot = BooleanField('R1 Marker')
+    a_r1_park = BooleanField('R1 Parking')
+    a_r1_auto_score = IntegerField('R1 Autonomous Score')
+    a_r1_notes = TextAreaField('R1 Autonomous Notes')
+    a_r2_land = BooleanField('R2 Landing')
+    a_r2_sample = BooleanField('R2 Sampling')
+    a_r2_depot = BooleanField('R2 Marker')
+    a_r2_park = BooleanField('R2 Marking')
+    a_r2_auto_score = IntegerField('R2 Autonomous Score')
+    a_r2_notes = TextAreaField('R2 Autonomous Notes')
+    # TeleOp
+    t_r1_lander_minerals = IntegerField('R1 Lander')
+    t_r1_depot_minerals = IntegerField('R1 Depot')
+    t_r1_teleop_score = IntegerField('R1 TeleOp Score')
+    t_r2_lander_minerals = IntegerField('R2 Lander')
+    t_r2_depot_minerals = IntegerField('R2 Depot')
+    t_r2_teleop_score = IntegerField('R2 TeleOp Score')
+    # Endgame
+    e_r1_latched = BooleanField('R1 Latched')
+    e_r1_park = SelectField('R1 Parking',
+                          choices=[(0, 'Not In'),
+                                   (15, 'In'),
+                                   (25, 'Fully In')],
+                          coerce=int,
+                          default=0)
+    e_r1_endgame_score = IntegerField('R1 Endgame Score')
+    e_r2_latched = BooleanField('R2 Latched')
+    e_r2_park = SelectField('R2 Parking',
+                          choices=[(0, 'Not In'),
+                                   (15, 'In'),
+                                   (25, 'Fully In')],
+                          coerce=int,
+                          default=0)
+    e_r2_endgame_score = IntegerField('R2 Endgame Score')
+    # Overall Scores
+    r1_total_score = IntegerField('R1 Total Score')
+    r2_total_score = IntegerField('R2 Total Score')
+    e_r1_notes = TextAreaField('R1 TeleOp Notes')
+    e_r2_notes = TextAreaField('R2 TeleOp Notes')
+
+
+class ScoringEditForm(Form):
+    comp = SelectField('Competition', choices=[
+        ('Meet3', 'Meet3'),
+        ('Qualifier', 'Qualifier'),
+        ('State', 'State'),
+        ('Worlds', 'Worlds'),
+    ], default='Qualifier')
+    match = StringField("Match #")
+    team = IntegerField("Team #")
+    # Autonomous
+    a_land = BooleanField('Landing')
+    a_sample = BooleanField('Sampling')
+    a_depot = BooleanField('Marker')
+    a_park = BooleanField('Parking')
+    a_score = IntegerField('Autonomous Score')
+    a_notes = TextAreaField('Autonomous Notes')
+    # TeleOp
+    t_lander_minerals = IntegerField('Lander Minerals')
+    t_depot_minerals = IntegerField('Depot Minerals')
+    t_score = IntegerField('TeleOp Score')
+    # Endgame
+    e_latched = BooleanField('Latched')
+    e_park = SelectField('Parking',
+                          choices=[(0, 'Not In'),
+                                   (15, 'In'),
+                                   (25, 'Fully In')],
+                          coerce=int,
+                          default=0)
+    e_score = IntegerField('Endgame Score', default=0)
+    # Overall Scores
+    total_score = IntegerField('Total Score')
+    e_notes = TextAreaField('TeleOp Notes')
+
+
+class ScoringReportForm(Form):
+    comp = SelectField('Competition', choices=[
+        ('Meet3', 'Meet3'),
+        ('Qualifier', 'Qualifier'),
+        ('State', 'State'),
+        ('Worlds', 'Worlds'),
+    ], default='Qualifier')
+    # auto = SelectField('Autonomous Score',
+    #                      choices=[(0, 'Ignore'),
+    #                               (1, 'Important'),
+    #                               (4, 'Critical')],
+    #                      coerce=int,
+    #                      default=1)
+    # teleop = SelectField('TeleOp Score',
+    #                    choices=[(0, 'Ignore'),
+    #                             (1, 'Important'),
+    #                             (4, 'Critical')],
+    #                    coerce=int,
+    #                    default=1)
+    # endgame = SelectField('Endgame Score',
+    #                    choices=[(0, 'Ignore'),
+    #                             (1, 'Important'),
+    #                             (4, 'Critical')],
+    #                    coerce=int,
+    #                    default=1)
+    # total = SelectField('Total Score',
+    #                    choices=[(0, 'Ignore'),
+    #                             (1, 'Important'),
+    #                             (4, 'Critical')],
+    #                    coerce=int,
+    #                    default=1)
