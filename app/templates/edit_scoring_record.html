@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Edit Scoring Record</h1>
+    {% from "includes/_formhelpers.html" import render_field %}
+    {% from "includes/_formhelpers.html" import render_booleanfield %}
+    <form method="POST" action="">
+        <div class="form-group">
+            {{ render_field(form.comp, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.match, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.team, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_booleanfield(form.a_land) }}
+        </div>
+        <div class="form-group">
+            {{ render_booleanfield(form.a_sample) }}
+        </div>
+        <div class="form-group">
+            {{ render_booleanfield(form.a_depot) }}
+        </div>
+        <div class="form-group">
+            {{ render_booleanfield(form.a_park) }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_score, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.a_notes, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_lander_minerals, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_depot_minerals, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.t_score, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_booleanfield(form.e_latched) }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.e_park, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.e_score, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.total_score, class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.e_notes, class_="form-control") }}
+        </div>
+        <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+    </form>
+
+
+{% endblock %}
