@@ -26,7 +26,6 @@
     <table id="scoutingrecords" class="tablesorter">
     <thead>
         <tr>
-            <th>ID</th>
             <th>Team</th>
             <th>Comp</th>
             <th>Scout</th>
@@ -37,7 +36,6 @@
     <tbody>
         {% for record in scouting_records %}
             <tr>
-                <td>{{ record.id }}</td>
                 <td><a href="team/{{ record.team_number }}">{{ record.team_number }}</a> <em class="h6">({{ record.team_name }})</em></td>
                 <td>{{ record.comp }}</td>
                 <td>{{ record.scout }}</td>
@@ -60,10 +58,9 @@
         <table id="scoringrecords" class="tablesorter">
             <thead>
             <tr>
-                <th>ID</th>
                 <th>Team</th>
-                <th>Comp</th>
                 <th>Match</th>
+                <th>Score</th>
                 <th>Scout</th>
                 <th></th>
                 <th></th>
@@ -72,10 +69,9 @@
             <tbody>
             {% for record in scoring_records %}
             <tr>
-                <td>{{ record.id }}</td>
                 <td><a href="team/{{ record.team_num }}">{{ record.team_num }}</a></td>
-                <td>{{ record.comp }}</td>
                 <td>{{ record.match_num }}</td>
+                <td>{{ record.score }}</td>
                 <td>{{ record.scout }}</td>
                 <td>
                     <a href="edit_scoring_record/{{ record.id }}" class="btn btn-info">Edit</a>

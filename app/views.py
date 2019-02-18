@@ -132,11 +132,11 @@ def register():
 def dashboard():
 
     cur = mysql.connection.cursor()
-    scouting_result = cur.execute('SELECT * FROM scouting')
+    scouting_result = cur.execute('SELECT * FROM scouting where comp=%s', ['Qualifier']) # todo update to state before pushing to production
     if scouting_result > 0:
         scouting_records = cur.fetchall()
 
-    scoring_result = cur.execute('SELECT * FROM scoring')
+    scoring_result = cur.execute('SELECT * FROM scoring where comp=%s', ['Qualifier'])
     if scoring_result > 0:
         scoring_records = cur.fetchall()
 
@@ -157,6 +157,19 @@ def dashboard():
 @is_logged_in
 def add_scouting_record():
     form = ScoutingForm(request.form)
+    division_teams = (3507, 5037, 6287, 7006, 7129, 8620, 8907, 9929, 10101, 10253, 10387, 10635,
+                      11177, 12644, 12913, 13197, 13365, 13836, 14495, 14615, 15005, 15159)
+
+
+    cur = mysql.connection.cursor()
+    sql_text = 'SELECT team_number FROM scouting where team_number in %s is not null and comp=%s'
+    cur.execute(sql_text, [division_teams, 'Qualifier'])
+    scouted_teams = [t['team_number'] for t in cur.fetchall()]
+    cur.close()
+
+    remaining_teams = list(set(division_teams) - set(scouted_teams))
+    remaining_teams.sort()
+
     if request.method == 'POST' and form.validate():
         team_number = form.team_number.data
         team_name = form.team_name.data
@@ -202,7 +215,7 @@ def add_scouting_record():
         return redirect(url_for('dashboard'))
 
 
-    return render_template('add_scouting_record.html', form=form)
+    return render_template('add_scouting_record.html', form=form, teams=remaining_teams)
 
 
 @app.route('/edit_scouting_record/<string:id>', methods=['GET', 'POST'])
@@ -320,6 +333,9 @@ def run_scouting_report():
         hanging = request.form['hanging']
         hanging_rel = (False, True)[request.form.get('hanging_rel', '') == u'y']
 
+        if int(lander_scoring) is 0:
+            cycle_time = 0
+
         sql_text = '''select comp, team_number, team_name,
                         (a_landed * {}) * (1 + a_landed_rel * {}) +
                         (a_sample * {}) * (1 + a_sample_rel * {}) +
@@ -413,21 +429,22 @@ def add_scoring_record():
         e_r2_endgame_score = form.e_r2_endgame_score.data
         r1_total_score = form.r1_total_score.data
         r2_total_score = form.r2_total_score.data
+        match_score = form.match_score.data
         e_r1_notes = form.e_r1_notes.data
         e_r2_notes = form.e_r2_notes.data
 
         # cols = '(comp, match_num, team_num, land, sample, depot, a_park, a_score, crater_minerals, depot_minerals, t_score, latched, e_park, e_score, score)'
 
 
-        sql_text = "INSERT INTO scoring(scout, comp, match_num, team_num, land, sample, depot, a_park, a_score, a_notes, lander_minerals, depot_minerals, t_score, latched, e_park, e_score, score, e_notes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        sql_text = "INSERT INTO scoring(scout, comp, match_num, team_num, land, sample, depot, a_park, a_score, a_notes, lander_minerals, depot_minerals, t_score, latched, e_park, e_score, score, match_score, e_notes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         lstval = [(session['username'], comp, match, int(r1_team), int(a_r1_land), int(a_r1_sample), int(a_r1_depot), int(a_r1_park),
                  int(a_r1_auto_score), a_r1_notes, int(t_r1_lander_minerals),
                  int(t_r1_depot_minerals), int(t_r1_teleop_score), int(e_r1_latched), int(e_r1_park),
-                 int(e_r1_endgame_score), int(r1_total_score), e_r1_notes),
+                 int(e_r1_endgame_score), int(r1_total_score), int(match_score), e_r1_notes),
                  (session['username'], comp, match, int(r2_team), int(a_r2_land), int(a_r2_sample), int(a_r2_depot), int(a_r2_park),
                  int(a_r2_auto_score), a_r2_notes, int(t_r2_lander_minerals),
                  int(t_r2_depot_minerals), int(t_r2_teleop_score), int(e_r2_latched), int(e_r2_park),
-                 int(e_r2_endgame_score), int(r2_total_score), e_r2_notes)
+                 int(e_r2_endgame_score), int(r2_total_score), int(match_score), e_r2_notes)
                 ]
 
         cur = mysql.connection.cursor()
@@ -478,6 +495,7 @@ def edit_scoring_record(id):
     form.e_park.data = scoring_record['e_park']
     form.e_score.data = scoring_record['e_score']
     form.total_score.data = scoring_record['score']
+    form.match_score.data = scoring_record['match_score']
     form.e_notes.data = scoring_record['e_notes']
 
     if request.method == 'POST' and form.validate():
@@ -497,14 +515,15 @@ def edit_scoring_record(id):
         e_park = request.form['e_park']
         e_score = request.form['e_score']
         score = request.form['total_score']
+        match_score = request.form['match_score']
         e_notes = request.form['e_notes']
 
         cur = mysql.connection.cursor()
         cur.execute("UPDATE scoring SET comp=%s, match_num=%s, team_num=%s, land=%s, sample=%s, "
                     "depot=%s, a_park=%s, a_score=%s, a_notes=%s, lander_minerals=%s, depot_minerals=%s, "
-                    "t_score=%s, latched=%s, e_park=%s, e_score=%s, score=%s, e_notes=%s "
+                    "t_score=%s, latched=%s, e_park=%s, e_score=%s, score=%s, match_score=%s, e_notes=%s "
                     "WHERE id = %s", (comp, match_num, team_num, land, sample, depot, a_park, a_score, a_notes, lander_minerals,
-                                      depot_minerals, t_score, latched, e_park, e_score, score, e_notes, id))
+                                      depot_minerals, t_score, latched, e_park, e_score, score, match_score, e_notes, id))
         mysql.connection.commit()
         cur.close()
 

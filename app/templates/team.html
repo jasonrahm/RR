@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Team {{ id }} Records</h1>
+    {% if scouting_records is defined and scouting_records %}
+        <h1>{{ scouting_records[0].team_name }} - {{ id }}</h1>
+    {% else %}
+        <h1>Team {{ id }}</h1>
+    {% endif %}
     <div>
     <h2>Scouting</h2>
     <table class="table table-striped table-responsive">
