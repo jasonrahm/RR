@@ -31,6 +31,7 @@ class ScoutingForm(Form):
     a_lander_loc = SelectField('Lander Location Preference?', choices=[
         ('Crater Side', 'Crater Side'),
         ('Depot Side', 'Depot Side'),
+        ('Neither', 'Neither')
     ])
     a_landed = BooleanField("Can They Land?", default=False)
     a_landed_rel = SelectField("Landing Reliability", choices=[
@@ -39,7 +40,7 @@ class ScoutingForm(Form):
         (.75, '75'),
         (.85, '85'),
         (.95, '95'),
-    ], coerce=float)
+    ], coerce=float, default=0)
     a_sample = BooleanField("Can They Sample?", default=False)
     a_sample_rel = SelectField("Sampling Reliability", choices=[
         (0, '<50%'),
@@ -47,7 +48,7 @@ class ScoutingForm(Form):
         (.75, '75'),
         (.85, '85'),
         (.95, '95'),
-    ], coerce=float)
+    ], coerce=float, default=0)
     a_marker = BooleanField("Can They Deliver the Marker?", default=False)
     a_marker_rel = SelectField("Marker Reliability", choices=[
         (0, '<50%'),
@@ -55,7 +56,7 @@ class ScoutingForm(Form):
         (.75, '75'),
         (.85, '85'),
         (.95, '95'),
-    ], coerce=float)
+    ], coerce=float, default=0)
     a_park = BooleanField("Can They Park?", default=False)
     a_park_rel = SelectField("Parking Reliability", choices=[
         (0, '<50%'),
@@ -63,13 +64,13 @@ class ScoutingForm(Form):
         (.75, '75'),
         (.85, '85'),
         (.95, '95'),
-    ], coerce=float)
+    ], coerce=float, default=0)
     a_compatible = SelectField("How Compatible Are They?", choices=[
         (0, 'not'),
         (1, 'low'),
         (3, 'medium'),
         (5, 'high'),
-    ], coerce=int)
+    ], coerce=int, default=0)
     a_notes = TextAreaField("Autonomous Notes", [validators.Length(max=500)])
     t_score_lander = BooleanField("Can They Score in the Lander?", default=False)
     t_mineral = SelectField("What Minerals Can They Score?", choices=[
@@ -77,19 +78,20 @@ class ScoutingForm(Form):
         ('Gold', 'Gold'),
         ('Silver', 'Silver'),
         ('Both', 'Both'),
-    ])
+    ], default='Neither')
     t_cycle = SelectField("What is Their Cycle Time?", choices=[
         (10, '0-5 sec'),
         (7, '5-10 sec'),
         (3, '10-15 sec'),
         (2, '15-20 sec'),
         (1, '20+ sec'),
-    ], coerce=int)
+        (0, 'Not Applicable')
+    ], coerce=int, default=0)
     t_load = SelectField("What is Their Load Size?", choices=[
         (0, '0'),
         (1, '1'),
         (5, '2'),
-    ], coerce=int)
+    ], coerce=int, default=0)
     t_score_position = SelectField("Where is Their Preferred Scoring Position?", choices=[
         ('Gold Center', 'Gold Center'),
         ('Gold Corner', 'Gold Corner'),
@@ -97,7 +99,8 @@ class ScoutingForm(Form):
         ('Silver Corner', 'Silver Corner'),
         ('Both Center', 'Both Center'),
         ('Both Corner', 'Both Corner'),
-    ])
+        ('No Preference', 'No Preference')
+    ], default='No Preference')
     t_notes = TextAreaField("TeleOp Notes", [validators.Length(max=500)])
     e_hang = BooleanField("Can They Hang?", default=False)
     e_hang_rel = SelectField("Hanging Reliability", choices=[
@@ -106,7 +109,7 @@ class ScoutingForm(Form):
         (.75, '75'),
         (.85, '85'),
         (.95, '95'),
-    ], coerce=float)
+    ], coerce=float, default=0)
     e_hangtime = IntegerField("How Many Seconds Remaining When They Hang?", default=0)
     e_notes = TextAreaField("Endgame Notes", [validators.Length(max=500)])
 
@@ -187,28 +190,28 @@ class ScoringForm(Form):
         ('Worlds', 'Worlds'),
     ], default='Qualifier')
     match = StringField("Match #")
-    r1 = IntegerField("Team #1")
-    r2 = IntegerField("Team #2")
+    r1 = IntegerField("Team #1", default=0)
+    r2 = IntegerField("Team #2", default=0)
     # Autonomous
     a_r1_land = BooleanField('R1 Landing')
     a_r1_sample = BooleanField('R1 Sampling')
     a_r1_depot = BooleanField('R1 Marker')
     a_r1_park = BooleanField('R1 Parking')
-    a_r1_auto_score = IntegerField('R1 Autonomous Score')
+    a_r1_auto_score = IntegerField('R1 Autonomous Score', default=0)
     a_r1_notes = TextAreaField('R1 Autonomous Notes')
     a_r2_land = BooleanField('R2 Landing')
     a_r2_sample = BooleanField('R2 Sampling')
     a_r2_depot = BooleanField('R2 Marker')
     a_r2_park = BooleanField('R2 Marking')
-    a_r2_auto_score = IntegerField('R2 Autonomous Score')
+    a_r2_auto_score = IntegerField('R2 Autonomous Score', default=0)
     a_r2_notes = TextAreaField('R2 Autonomous Notes')
     # TeleOp
-    t_r1_lander_minerals = IntegerField('R1 Lander')
-    t_r1_depot_minerals = IntegerField('R1 Depot')
-    t_r1_teleop_score = IntegerField('R1 TeleOp Score')
-    t_r2_lander_minerals = IntegerField('R2 Lander')
-    t_r2_depot_minerals = IntegerField('R2 Depot')
-    t_r2_teleop_score = IntegerField('R2 TeleOp Score')
+    t_r1_lander_minerals = IntegerField('R1 Lander', default=0)
+    t_r1_depot_minerals = IntegerField('R1 Depot', default=0)
+    t_r1_teleop_score = IntegerField('R1 TeleOp Score', default=0)
+    t_r2_lander_minerals = IntegerField('R2 Lander', default=0)
+    t_r2_depot_minerals = IntegerField('R2 Depot', default=0)
+    t_r2_teleop_score = IntegerField('R2 TeleOp Score', default=0)
     # Endgame
     e_r1_latched = BooleanField('R1 Latched')
     e_r1_park = SelectField('R1 Parking',
@@ -217,7 +220,7 @@ class ScoringForm(Form):
                                    (25, 'Fully In')],
                           coerce=int,
                           default=0)
-    e_r1_endgame_score = IntegerField('R1 Endgame Score')
+    e_r1_endgame_score = IntegerField('R1 Endgame Score', default=0)
     e_r2_latched = BooleanField('R2 Latched')
     e_r2_park = SelectField('R2 Parking',
                           choices=[(0, 'Not In'),
@@ -225,10 +228,11 @@ class ScoringForm(Form):
                                    (25, 'Fully In')],
                           coerce=int,
                           default=0)
-    e_r2_endgame_score = IntegerField('R2 Endgame Score')
+    e_r2_endgame_score = IntegerField('R2 Endgame Score', default=0)
     # Overall Scores
-    r1_total_score = IntegerField('R1 Total Score')
-    r2_total_score = IntegerField('R2 Total Score')
+    r1_total_score = IntegerField('R1 Total Score', default=0)
+    r2_total_score = IntegerField('R2 Total Score', default=0)
+    match_score = IntegerField('Combined Score', default=0)
     e_r1_notes = TextAreaField('R1 TeleOp Notes')
     e_r2_notes = TextAreaField('R2 TeleOp Notes')
 
@@ -264,6 +268,7 @@ class ScoringEditForm(Form):
     e_score = IntegerField('Endgame Score', default=0)
     # Overall Scores
     total_score = IntegerField('Total Score')
+    match_score = IntegerField('Combined Score')
     e_notes = TextAreaField('TeleOp Notes')
 
 
