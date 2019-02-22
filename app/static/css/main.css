@@ -267,6 +267,20 @@ table.floatThead-table {
   }
 }
 
+/* For HighCharts Sparklines */
+#table-sparkline {
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+.highcharts-tooltip>span {
+    background: white;
+    border: 1px solid silver;
+    border-radius: 3px;
+    box-shadow: 1px 1px 2px #888;
+    padding: 8px;
+}
+
+
 /* For CheckBox toggle sliders */
 .outerDivFull { margin:50px; }
 .switchToggle input[type=checkbox]{height: 0; width: 0; visibility: hidden; position: absolute; }

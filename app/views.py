@@ -1,8 +1,10 @@
 from app import app, mysql
-from flask import render_template, flash, redirect, url_for, session, request
+from bs4 import BeautifulSoup as bs
+from flask import render_template, flash, Markup, redirect, url_for, session, request
 from forms import RegisterForm, ScoutingForm, ScoutingReportForm, ScoringForm, ScoringEditForm, ScoringReportForm
 from functools import wraps
 from passlib.hash import sha256_crypt
+import requests
 
 
 # Check login status decorator
@@ -132,11 +134,11 @@ def register():
 def dashboard():
 
     cur = mysql.connection.cursor()
-    scouting_result = cur.execute('SELECT * FROM scouting where comp=%s', ['Qualifier']) # todo update to state before pushing to production
+    scouting_result = cur.execute('SELECT * FROM scouting where comp=%s', ['State']) # todo update to state before pushing to production
     if scouting_result > 0:
         scouting_records = cur.fetchall()
 
-    scoring_result = cur.execute('SELECT * FROM scoring where comp=%s', ['Qualifier'])
+    scoring_result = cur.execute('SELECT * FROM scoring where comp=%s', ['State'])
     if scoring_result > 0:
         scoring_records = cur.fetchall()
 
@@ -163,7 +165,7 @@ def add_scouting_record():
 
     cur = mysql.connection.cursor()
     sql_text = 'SELECT team_number FROM scouting where team_number in %s is not null and comp=%s'
-    cur.execute(sql_text, [division_teams, 'Qualifier'])
+    cur.execute(sql_text, [division_teams, 'State'])
     scouted_teams = [t['team_number'] for t in cur.fetchall()]
     cur.close()
 
@@ -586,11 +588,41 @@ def scoring_report():
 def team(id):
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM scouting where team_number=%s", [id])
+    cur.execute("SELECT * FROM scouting where team_number=%s and comp=%s", [id, 'State'])
     scouting_records = cur.fetchall()
-    cur.execute("SELECT * FROM scoring where team_num=%s", [id])
+    cur.execute("SELECT * FROM scoring where team_num=%s and comp=%s", [id, 'State'])
     scoring_records = cur.fetchall()
-    cur.close()
+    # data = []
+    # try:
+    #     for r in scoring_records:
+    #         data.append([r['a_score'], r['t_score'], r['e_score']])
+    #     cur.close()
+    #     data = zip(*data)
+    #     recs = [[str(x) for x in tup] for tup in data]
+    #     zrecs = zip(*recs)
+    #     # FIX FOR ACTUAL NUMBER OF RECORDS
+    #     sdata = ', '.join(zrecs[0]) + ' ; ' + ', '.join(zrecs[1]) + '; ' + ', '.join(zrecs[2])
+    #     print sdata
+    # except:
+    #     pass
 
     return render_template('team.html', id=id, scouting_records=scouting_records, scoring_records=scoring_records)
+    # return render_template('team.html', id=id, scouting_records=scouting_records, scoring_records=scoring_records, sdata=sdata)
+
+
+@app.route('/rankings', methods=['GET'])
+def rankings():
+    rank = 'https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/rankings.html'
+    rank_response = requests.get(rank, verify=False)
+    rank_soup = bs(rank_response.text)
+    rank_data = rank_soup.findAll('table')[0]
+
+    match = 'https://ftc-results.firstillinoisrobotics.org/live/il-cmp-rr/upload/d2/matchresultsdetails.html'
+    match_response = requests.get(match, verify=False)
+    match_soup = bs(match_response.text)
+    match_data = match_soup.findAll('table')[0]
+
+    return render_template('rankings.html',
+                           rank_data=Markup(rank_data),
+                           match_data=Markup(match_data))
 
