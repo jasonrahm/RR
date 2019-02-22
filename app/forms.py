@@ -27,7 +27,7 @@ class ScoutingForm(Form):
         ('Qualifier', 'Qualifier'),
         ('State', 'State'),
         ('Worlds', 'Worlds'),
-    ], default='Qualifier')
+    ], default='State')
     a_lander_loc = SelectField('Lander Location Preference?', choices=[
         ('Crater Side', 'Crater Side'),
         ('Depot Side', 'Depot Side'),
@@ -120,7 +120,7 @@ class ScoutingReportForm(Form):
         ('Qualifier', 'Qualifier'),
         ('State', 'State'),
         ('Worlds', 'Worlds'),
-    ], default='Qualifier')
+    ], default='State')
     landing = SelectField('Landing',
                        choices=[(0, 'Ignore'),
                                 (1, 'Important'),
@@ -188,7 +188,7 @@ class ScoringForm(Form):
         ('Qualifier', 'Qualifier'),
         ('State', 'State'),
         ('Worlds', 'Worlds'),
-    ], default='Qualifier')
+    ], default='State')
     match = StringField("Match #")
     r1 = IntegerField("Team #1", default=0)
     r2 = IntegerField("Team #2", default=0)
@@ -243,7 +243,7 @@ class ScoringEditForm(Form):
         ('Qualifier', 'Qualifier'),
         ('State', 'State'),
         ('Worlds', 'Worlds'),
-    ], default='Qualifier')
+    ], default='State')
     match = StringField("Match #")
     team = IntegerField("Team #")
     # Autonomous
@@ -278,7 +278,7 @@ class ScoringReportForm(Form):
         ('Qualifier', 'Qualifier'),
         ('State', 'State'),
         ('Worlds', 'Worlds'),
-    ], default='Qualifier')
+    ], default='State')
     # auto = SelectField('Autonomous Score',
     #                      choices=[(0, 'Ignore'),
     #                               (1, 'Important'),

@@ -18,6 +18,7 @@ var e_r2_park_previous = 0;
 var e_r2_score_counter = 0;
 var r1_total_score = 0;
 var r2_total_score = 0;
+var matchscore = 0;
 
 jQuery(document).ready(function() {
     $("#r1land_switch").change( function() {
@@ -159,14 +160,16 @@ jQuery(document).ready(function() {
     });
     $("input").change(function(){
         r1_total_score = a_r1_land + a_r1_sample + a_r1_depot + a_r1_park + t_r1_score_counter + e_r1_score_counter;
-       $("#r1_total_score").val(r1_total_score);
+        matchscore = r1_total_score + r2_total_score;
+        $("#r1_total_score").val(r1_total_score);
+        $("#match_score").val(matchscore);
     });
     $("input").change(function(){
         r2_total_score = a_r2_land + a_r2_sample + a_r2_depot + a_r2_park + t_r2_score_counter + e_r2_score_counter;
+        matchscore = r2_total_score + r1_total_score;
         $("#r2_total_score").val(r2_total_score);
+        $("#match_score").val(matchscore);
     });
-
-    // $('table.sticky-header').floatThead();
 
     // Sorting Tables
     $("#scoutingrecords").tablesorter({
@@ -178,7 +181,7 @@ jQuery(document).ready(function() {
     $("#scoutingreport").tablesorter({
         sortList: [[4,0]]
     });
-    $("#scoringreport").tablesorter({
+    $("#table-sparkline").tablesorter({
         sortList: [[2,1]]
     });
 
