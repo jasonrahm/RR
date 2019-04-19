@@ -134,11 +134,11 @@ def register():
 def dashboard():
 
     cur = mysql.connection.cursor()
-    scouting_result = cur.execute('SELECT * FROM scouting where comp=%s', ['State']) # todo update to state before pushing to production
+    scouting_result = cur.execute('SELECT * FROM scouting where comp=%s', ['Worlds']) # todo update to state before pushing to production
     if scouting_result > 0:
         scouting_records = cur.fetchall()
 
-    scoring_result = cur.execute('SELECT * FROM scoring where comp=%s', ['State'])
+    scoring_result = cur.execute('SELECT * FROM scoring where comp=%s', ['Worlds'])
     if scoring_result > 0:
         scoring_records = cur.fetchall()
 
@@ -159,13 +159,21 @@ def dashboard():
 @is_logged_in
 def add_scouting_record():
     form = ScoutingForm(request.form)
-    division_teams = (3507, 5037, 6287, 7006, 7129, 8907, 9929, 10101, 10253, 10387, 10635,
-                      11072, 11177, 12644, 12913, 13197, 13365, 13836, 14495, 14615, 15005, 15159)
+    division_teams = (252, 365, 3216, 3763, 3954, 4130, 4174, 4177,
+                      4318, 4347, 4924, 5037, 5142, 5291, 5485, 5842,
+                      5962, 5975, 6007, 6010, 6051, 6055, 6369, 6440,
+                      6567, 6931, 7035, 7093, 7129, 7149, 7190, 8479,
+                      8528, 8644, 8680, 8719, 8813, 9168, 9445, 9794,
+                      9862, 9867, 9890, 9956, 9971, 9984, 10030, 10091,
+                      10144, 10273, 10376, 10435, 10582, 10738, 10918, 11047,
+                      11095, 11115, 11184, 11248, 11301, 11302, 11316, 11525,
+                      11691, 11808, 12231, 12531, 12538, 12589, 12773, 12835,
+                      13247, 13426, 13906, 13917, 14270, 14320, 14568, 16142)
 
 
     cur = mysql.connection.cursor()
     sql_text = 'SELECT team_number FROM scouting where team_number in %s is not null and comp=%s'
-    cur.execute(sql_text, [division_teams, 'State'])
+    cur.execute(sql_text, [division_teams, 'Worlds'])
     scouted_teams = [t['team_number'] for t in cur.fetchall()]
     cur.close()
 
@@ -588,9 +596,9 @@ def scoring_report():
 def team(id):
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM scouting where team_number=%s and comp=%s", [id, 'State'])
+    cur.execute("SELECT * FROM scouting where team_number=%s and comp=%s", [id, 'Worlds'])
     scouting_records = cur.fetchall()
-    cur.execute("SELECT * FROM scoring where team_num=%s and comp=%s", [id, 'State'])
+    cur.execute("SELECT * FROM scoring where team_num=%s and comp=%s", [id, 'Worlds'])
     scoring_records = cur.fetchall()
     # data = []
     # try:

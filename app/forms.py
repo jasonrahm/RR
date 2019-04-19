@@ -79,14 +79,7 @@ class ScoutingForm(Form):
         ('Silver', 'Silver'),
         ('Both', 'Both'),
     ], default='Neither')
-    t_cycle = SelectField("What is Their Cycle Time?", choices=[
-        (10, '0-5 sec'),
-        (7, '5-10 sec'),
-        (3, '10-15 sec'),
-        (2, '15-20 sec'),
-        (1, '20+ sec'),
-        (0, 'Not Applicable')
-    ], coerce=int, default=0)
+    t_cycle = IntegerField("How many loads can they delivery?", default=0)
     t_load = SelectField("What is Their Load Size?", choices=[
         (0, '0'),
         (1, '1'),
