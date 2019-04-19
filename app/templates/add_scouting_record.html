@@ -3,11 +3,12 @@
 {% block content %}
     <h1>Add Scouting Record</h1>
     <h3>Remaining Teams to Scout</h3>
-    <ul>
+    <ul class="list list-inline">
     {% for team in teams %}
-        <li>{{ team }}</li>
+        <li>( {{ team }} )</li>
     {% endfor %}
     </ul>
+
 
     <hr>
     {% from "includes/_formhelpers.html" import render_field %}
